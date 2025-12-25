@@ -7,5 +7,5 @@ import com.loken.entity.Category;
 public interface ICategoryRepository extends JpaRepository<Category, Long> {
 	
 	boolean existsByName(String name);
-
+	
 }

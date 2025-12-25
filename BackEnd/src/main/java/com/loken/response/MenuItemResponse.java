@@ -1,7 +1,6 @@
 package com.loken.response;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import com.loken.entity.FoodType;
 
 import lombok.Data;
 
@@ -20,24 +19,13 @@ public class MenuItemResponse {
 
     private String image;
 
-    private Boolean isAvailable;
-
-    private String spiceLevel;
-
-    private Double rating;
-
     private Long restaurantId;
     private String restaurantName;
     private String location;
-    private LocalTime openTime;
-    private LocalTime closeTime;
-    private String photo;
-
+    
     private Long categoryId;
     private String categoryName;
-
-    private LocalDateTime createdAt;
     
-    private LocalDateTime updatedAt;
-
+    private FoodType foodType;
+    
 }

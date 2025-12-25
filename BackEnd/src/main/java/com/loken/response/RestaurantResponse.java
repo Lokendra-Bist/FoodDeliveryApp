@@ -7,18 +7,30 @@ import lombok.Data;
 @Data
 public class RestaurantResponse {
 
-    private Long id;
-    
-    private String name;
+	private Long id;
 
-    private String photo;
-    
-    private String location;
-    
-    private LocalTime openTime;
-    
-    private LocalTime closeTime;
+	private String name;
 
-    private Boolean isOpen;
-    
+	private String coverPhoto;
+
+	private String restaurantPhoto;
+
+	private String address;
+	
+	private String phoneNumber;
+
+	private String description;
+
+	private LocalTime openTime;
+
+	private LocalTime closeTime;
+
+	private LocalTime startTime;
+
+	private LocalTime endTime;
+	
+	private Double latitude;
+	
+    private Double longitude;
+
 }

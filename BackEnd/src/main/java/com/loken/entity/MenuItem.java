@@ -1,4 +1,4 @@
-package com.loken.entity;
+	package com.loken.entity;
 
 import java.time.LocalDateTime;
 
@@ -7,6 +7,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +29,7 @@ public class MenuItem {
     @Column(nullable = false)
     private String name;
 
-    @Column(length = 500)
+    @Column(length = 200)
     private String description;
 
     @Column(nullable = false)
@@ -38,13 +40,6 @@ public class MenuItem {
     @Lob
     private byte[] image;
 
-    @Column(nullable = false)
-    private Boolean isAvailable = true;
-
-    private String spiceLevel;
-
-    private Double rating = 0.0;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
@@ -52,6 +47,10 @@ public class MenuItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FoodType foodType;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -21,4 +21,5 @@ public class Category {
     
     @Lob
     private byte[] image;
+    
 }

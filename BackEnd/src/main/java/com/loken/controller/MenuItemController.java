@@ -32,14 +32,20 @@ public class MenuItemController {
 	
 	@PostMapping("/addMenuItem")
 	public ResponseEntity<MenuItemResponse> addMenuItem(@Valid @ModelAttribute MenuItemRequest item,
-															@RequestParam("photo") MultipartFile photo) {
-		return new ResponseEntity<>(menuItemService.addMenuItem(item, photo), HttpStatus.OK);
+															@RequestParam("image") MultipartFile image) {
+		return new ResponseEntity<>(menuItemService.addMenuItem(item, image), HttpStatus.OK);
 	}
 	
-	@GetMapping("getAllItemsByCategory/{id}")
+	@GetMapping("/getAllItemsByCategory/{id}")
 	public ResponseEntity<List<MenuItemResponse>> getAllMenuItemsByCategory(
 	        @PathVariable Long id) { 
 	    return new ResponseEntity<>(menuItemService.getItemByCategory(id), HttpStatus.OK);
+	}
+	
+	@GetMapping("/restaurant/{restaurantId}/category/{categoryId}")
+	public ResponseEntity<List<MenuItemResponse>> getItemByRestaurantAndCategory(@PathVariable("restaurantId") Long restaurantId, 
+																					@PathVariable("categoryId") Long categoryId) {
+		return new ResponseEntity<>(menuItemService.getMenuItemByRestaurantAndCategory(restaurantId, categoryId), HttpStatus.OK);
 	}
 
 }

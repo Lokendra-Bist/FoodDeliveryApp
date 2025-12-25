@@ -13,3 +13,16 @@ export const getAllCategories = async () => {
     throw error;
   }
 };
+
+export const getCategoryByRestaurantId = async (restaurantId) => {
+  try {
+    const response = await api.get(`categoryByRestaurant/${restaurantId}`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error fetching categories for restaurant ID ${restaurantId}:`,
+      error
+    );
+    throw error;
+  }
+};

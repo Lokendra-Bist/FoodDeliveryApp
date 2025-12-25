@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.loken.entity.Category;
@@ -12,6 +13,7 @@ import com.loken.exception.PhotoProcessingException;
 import com.loken.exception.ResourceAlreadyExistsException;
 import com.loken.mapper.CategoryMapper;
 import com.loken.repository.ICategoryRepository;
+import com.loken.repository.IMenuItemRepository;
 import com.loken.request.CategoryRequest;
 import com.loken.response.CategoryResponse;
 
@@ -23,6 +25,8 @@ public class CategoryMgmtService implements ICategoryMgmtService {
 
 	private final ICategoryRepository categoryRepo;
 	
+	private final IMenuItemRepository menuReppo;
+		
 	@Override
 	public CategoryResponse saveCategory(CategoryRequest request, MultipartFile photo) {
 		if(categoryRepo.existsByName(request.getName())) {
@@ -46,6 +50,14 @@ public class CategoryMgmtService implements ICategoryMgmtService {
 	public List<CategoryResponse> getAllCategory() {
 		List<Category> categoryList = categoryRepo.findAll();
 		return categoryList.stream().map(CategoryMapper::toResponse).collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional
+	public List<CategoryResponse> getCategoriesByRestaurant(Long restaurantId) {
+		return menuReppo.findDistinctCategoriesByRestaurant(restaurantId).stream()
+														.map(CategoryMapper::toResponse)
+														.collect(Collectors.toList());
 	}
 
 }

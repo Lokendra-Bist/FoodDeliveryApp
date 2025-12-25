@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.loken.entity.Restaurant;
 import com.loken.exception.PhotoProcessingException;
+import com.loken.exception.ResourceNotFoundException;
 import com.loken.mapper.RestaurantMapper;
 import com.loken.repository.IRestaurantRepository;
 import com.loken.request.RestaurantRequest;
@@ -23,14 +24,16 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 	private final IRestaurantRepository restaurantRepo;
 	
 	@Override
-	public RestaurantResponse addRestaurant(RestaurantRequest request, MultipartFile photo) {
-		byte[] photoBytes = null;
+	public RestaurantResponse addRestaurant(RestaurantRequest request, MultipartFile coverPhoto, MultipartFile restaurantPhoto) {
+		byte[] coverPhotoBytes = null;
+		byte[] restaurantPhotobytes = null;
 		try {
-			photoBytes = photo.getBytes();
+			coverPhotoBytes = coverPhoto.getBytes();
+			restaurantPhotobytes = restaurantPhoto.getBytes();
 		} catch (IOException e) {
 			throw new PhotoProcessingException("Cannot Read Photo Bytes");
 		}
-		Restaurant restaurant = RestaurantMapper.toEntity(request, photoBytes);
+		Restaurant restaurant = RestaurantMapper.toEntity(request, coverPhotoBytes, restaurantPhotobytes);
 		restaurantRepo.save(restaurant);
 		return RestaurantMapper.toResponse(restaurant);
 	}
@@ -41,6 +44,13 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 							 .stream()
 							 .map(RestaurantMapper::toResponse)
 							 .collect(Collectors.toList());
+	}
+
+	@Override
+	public RestaurantResponse getRestaurantById(Long id) {
+	    Restaurant restaurant = restaurantRepo.findById(id)
+	        .orElseThrow(() -> new ResourceNotFoundException("Restaurant Not Found With Id: " + id));
+	    return RestaurantMapper.toResponse(restaurant);
 	}
 
 }

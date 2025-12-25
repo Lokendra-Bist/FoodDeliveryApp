@@ -4,6 +4,10 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import { Home } from "./pages/Home";
 import { Toaster } from "react-hot-toast";
+import { AddRestaurant } from "./pages/restaurant/AddRestaurant";
+import { Restaurant } from "./pages/restaurant/Restaurant";
+import { RestaurantDetail } from "./components/restaurant/RestaurantDetail";
+import { AddMenu } from "./pages/menu/AddMenu";
 
 const App = () => {
   return (
@@ -14,6 +18,10 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/all-restaurant" element={<Restaurant />} />
+          <Route path="/restaurant-detail/:id" element={<RestaurantDetail />} />
+          <Route path="/add-restaurant" element={<AddRestaurant />} />
+          <Route path="/add-menu" element={<AddMenu />} />
         </Routes>
       </div>
       <Footer />

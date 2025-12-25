@@ -12,5 +12,7 @@ public interface ICategoryMgmtService {
 	CategoryResponse saveCategory(CategoryRequest request, MultipartFile photo);
 	
 	List<CategoryResponse> getAllCategory();
-
+	
+	List<CategoryResponse> getCategoriesByRestaurant(Long restaurantId);
+	
 }

@@ -1,6 +1,5 @@
 package com.loken.mapper;
 
-import java.time.LocalTime;
 import java.util.Base64;
 
 import com.loken.entity.Restaurant;
@@ -9,13 +8,20 @@ import com.loken.response.RestaurantResponse;
 
 public class RestaurantMapper {
 	
-	public static Restaurant toEntity(RestaurantRequest request, byte[] photoBytes) {
+	public static Restaurant toEntity(RestaurantRequest request, byte[] coverPhotoBytes, byte[] restaurantPhotoBytes) {
 		Restaurant restaurant = new Restaurant();
 		restaurant.setName(request.getName());
-		restaurant.setPhoto(photoBytes);
-		restaurant.setLocation(request.getLocation());
+		restaurant.setDescription(request.getDescription());		
+		restaurant.setAddress(request.getAddress());
+		restaurant.setPhoneNumber(request.getPhoneNumber());
+		restaurant.setCoverPhoto(coverPhotoBytes);
+		restaurant.setRestaurantPhoto(restaurantPhotoBytes);
 		restaurant.setOpenTime(request.getOpenTime());
 		restaurant.setCloseTime(request.getCloseTime());
+		restaurant.setStartTime(request.getStartTime());
+		restaurant.setEndTime(request.getEndTime());
+		restaurant.setLatitude(request.getLatitude());
+		restaurant.setLongitude(request.getLongitude());
 		return restaurant;
 	}
 	
@@ -23,17 +29,18 @@ public class RestaurantMapper {
 		RestaurantResponse response = new RestaurantResponse();
 		response.setId(restaurant.getId());
         response.setName(restaurant.getName());
-        response.setLocation(restaurant.getLocation());
-        response.setPhoto(Base64.getEncoder().encodeToString(restaurant.getPhoto()));
+        response.setDescription(restaurant.getDescription());
+        response.setAddress(restaurant.getAddress());
+        response.setPhoneNumber(restaurant.getPhoneNumber());
+        response.setCoverPhoto(Base64.getEncoder().encodeToString(restaurant.getCoverPhoto()));
+        response.setRestaurantPhoto(Base64.getEncoder().encodeToString(restaurant.getRestaurantPhoto()));
         response.setOpenTime(restaurant.getOpenTime());
         response.setCloseTime(restaurant.getCloseTime());
-        response.setIsOpen(checkIfOpen(restaurant));
+        response.setStartTime(restaurant.getStartTime());
+        response.setEndTime(restaurant.getEndTime());
+        response.setLatitude(restaurant.getLatitude());
+        response.setLongitude(restaurant.getLongitude());
         return response;
-	}
-
-	private static Boolean checkIfOpen(Restaurant restaurant) {
-		LocalTime now = LocalTime.now();
-        return now.isAfter(restaurant.getOpenTime()) && now.isBefore(restaurant.getCloseTime());
 	}
 
 }

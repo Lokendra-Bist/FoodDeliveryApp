@@ -1,23 +1,23 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import foodfusion from "../../assets/foodfusion.webp";
+import { NavLink } from "react-router-dom";
 import { IoCartOutline, IoSearchSharp } from "react-icons/io5";
+import foodfusion from "../../assets/foodfusion.webp";
 
 const Navbar = () => {
-  const [menu, setMenu] = useState("home");
-
   return (
-    <nav className="navbar navbar-expand-md py-2  ">
+    <nav className="navbar navbar-expand-md navbar-light bg-light py-2 shadow-sm">
       <div className="container">
-        <Link className="navbar-brand" to="/">
+        <NavLink className="navbar-brand" to="/">
           <img src={foodfusion} alt="logo" style={{ width: "70px" }} />
-        </Link>
+        </NavLink>
 
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -25,62 +25,44 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="mainNavbar">
           <ul className="navbar-nav mx-auto mb-2 mb-md-0 gap-md-3">
             <li className="nav-item">
-              <Link
+              <NavLink
                 to="/"
-                className={`nav-link ${
-                  menu === "home" ? "active text-warning fw-semibold" : ""
-                }`}
-                onClick={() => setMenu("home")}
+                className={({ isActive }) =>
+                  "nav-link" + (isActive ? " text-warning fw-semibold" : "")
+                }
               >
                 Home
-              </Link>
+              </NavLink>
             </li>
-
             <li className="nav-item">
-              <a
-                href="#explore-menu"
-                className={`nav-link ${
-                  menu === "menu" ? "active text-warning fw-semibold" : ""
-                }`}
-                onClick={() => setMenu("menu")}
-              >
-                Menu
+              <a href="/explore-menu" className="nav-link">
+                Explore
               </a>
             </li>
-
             <li className="nav-item">
-              <a
-                href="#app-download"
-                className={`nav-link ${
-                  menu === "mobile-app" ? "active text-warning fw-semibold" : ""
-                }`}
-                onClick={() => setMenu("mobile-app")}
+              <NavLink
+                to="/all-restaurant"
+                className={({ isActive }) =>
+                  "nav-link" + (isActive ? " text-warning fw-semibold" : "")
+                }
               >
-                Mobile App
-              </a>
+                All Restaurant
+              </NavLink>
             </li>
-
             <li className="nav-item">
-              <a
-                href="#footer"
-                className={`nav-link ${
-                  menu === "contact-us" ? "active text-warning fw-semibold" : ""
-                }`}
-                onClick={() => setMenu("contact-us")}
-              >
+              <a href="#footer" className="nav-link">
                 Contact Us
               </a>
             </li>
           </ul>
 
-          <div className="d-flex align-items-center gap-4">
-            <IoSearchSharp />
+          <div className="d-flex align-items-center">
+            <IoSearchSharp className="me-3 fs-5" />
 
-            <div className="position-relative">
-              <Link to="/cart">
-                <IoCartOutline />
-              </Link>
-
+            <div className="position-relative me-3">
+              <NavLink to="/cart">
+                <IoCartOutline className="fs-5" />
+              </NavLink>
               {/* {totalQuantity > 0 && (
                 <span
                   className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"

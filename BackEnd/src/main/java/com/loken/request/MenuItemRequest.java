@@ -1,5 +1,7 @@
 package com.loken.request;
 
+import com.loken.entity.FoodType;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -17,16 +19,16 @@ public class MenuItemRequest {
     @Positive(message = "Price must be greater than 0")
     private Double price;
 
-    @Positive(message = "Discount price must be greater than 0")
-    private Double discountPrice;
-
-    private String spiceLevel; 
-
-    private Boolean isAvailable = true;
-
+    @Positive(message = "Discount price must be greater than or equal to 0")
+    private Double discountPrice = 0.0;
+    
     @NotNull(message = "Restaurant ID is required")
     private Long restaurantId;
 
+    @NotNull(message = "Category ID is required")
     private Long categoryId;
+    
+    @NotNull
+    private FoodType foodType;
 	
 }

@@ -9,9 +9,10 @@ import com.loken.response.RestaurantResponse;
 
 public interface IRestaurantMgmtService {
 	
-	RestaurantResponse addRestaurant(RestaurantRequest request, MultipartFile photo);
+	RestaurantResponse addRestaurant(RestaurantRequest request, MultipartFile coverPhoto, MultipartFile restaurantPhoto);
 
-	
 	List<RestaurantResponse> getAllRestaurants();
+	
+	RestaurantResponse getRestaurantById(Long id);
 	
 }

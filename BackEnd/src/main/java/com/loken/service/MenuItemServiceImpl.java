@@ -67,4 +67,10 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 		return item.stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
 	}
 
+	@Override
+	@Transactional
+	public List<MenuItemResponse> getMenuItemByRestaurantAndCategory(Long restaurantId, Long categoryId) {
+		List<MenuItem> menuItemList = menuItemRepo.findByRestaurantIdAndCategoryId(restaurantId, categoryId);
+		return menuItemList.stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
+	}
 }

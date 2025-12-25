@@ -17,10 +17,9 @@ public class MenuItemMapper {
 	    item.setPrice(request.getPrice());
 	    item.setDiscountPrice(request.getDiscountPrice());
 	    item.setImage(imageBytes);
-	    item.setIsAvailable(request.getIsAvailable() != null ? request.getIsAvailable() : true);
-	    item.setSpiceLevel(request.getSpiceLevel());
 	    item.setRestaurant(restaurant);
 	    item.setCategory(category);
+	    item.setFoodType(request.getFoodType());
 	    return item;
 	}
 	
@@ -32,26 +31,16 @@ public class MenuItemMapper {
         res.setPrice(item.getPrice());
         res.setDiscountPrice(item.getDiscountPrice());
         res.setImage(Base64.getEncoder().encodeToString(item.getImage()));
-        res.setIsAvailable(item.getIsAvailable());
-        res.setSpiceLevel(item.getSpiceLevel());
-        res.setRating(item.getRating());
-        res.setCreatedAt(item.getCreatedAt());
-        res.setUpdatedAt(item.getUpdatedAt());
 
         if (item.getRestaurant() != null) {
-            res.setRestaurantId(item.getRestaurant().getId());
+        	res.setRestaurantId(item.getRestaurant().getId());
             res.setRestaurantName(item.getRestaurant().getName());
-            res.setLocation(item.getRestaurant().getLocation());
-            res.setOpenTime(item.getRestaurant().getOpenTime());
-            res.setCloseTime(item.getRestaurant().getCloseTime());
-            res.setImage(Base64.getEncoder().encodeToString(item.getRestaurant().getPhoto()));        
+            res.setLocation(item.getRestaurant().getAddress());
         }
-
-        if (item.getCategory() != null) {
-            res.setCategoryId(item.getCategory().getId());
-            res.setCategoryName(item.getCategory().getName());
+        if(item.getCategory() != null) {
+        	res.setCategoryId(item.getCategory().getId());
+        	res.setCategoryName(item.getCategory().getName());       
         }
-
         return res;
     }
 

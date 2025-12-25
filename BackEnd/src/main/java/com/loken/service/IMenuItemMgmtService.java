@@ -12,5 +12,6 @@ public interface IMenuItemMgmtService {
 	MenuItemResponse addMenuItem(MenuItemRequest request, MultipartFile photo);
 	
 	List<MenuItemResponse> getItemByCategory(Long id);
-
+	
+	List<MenuItemResponse> getMenuItemByRestaurantAndCategory(Long restaurantId, Long categoryId);
 }
