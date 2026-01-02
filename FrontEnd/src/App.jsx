@@ -8,6 +8,7 @@ import { AddRestaurant } from "./pages/restaurant/AddRestaurant";
 import { Restaurant } from "./pages/restaurant/Restaurant";
 import { RestaurantDetail } from "./components/restaurant/RestaurantDetail";
 import { AddMenu } from "./pages/menu/AddMenu";
+import { MenuList } from "./pages/menu/MenuList";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/restaurant-detail/:id" element={<RestaurantDetail />} />
           <Route path="/add-restaurant" element={<AddRestaurant />} />
           <Route path="/add-menu" element={<AddMenu />} />
+          <Route path="/explore-menu" element={<MenuList />} />
         </Routes>
       </div>
       <Footer />

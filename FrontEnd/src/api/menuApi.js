@@ -39,3 +39,13 @@ export const getMenuItemsByRestaurantIdAndCategoryId = async (
     throw error;
   }
 };
+
+export const getAllMenuItems = async () => {
+  try {
+    const response = await api.get("/getAllMenuItems");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all menu items:", error);
+    throw error;
+  }
+};
