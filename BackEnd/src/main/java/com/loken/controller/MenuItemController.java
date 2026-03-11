@@ -3,12 +3,15 @@ package com.loken.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +49,44 @@ public class MenuItemController {
 	public ResponseEntity<List<MenuItemResponse>> getItemByRestaurantAndCategory(@PathVariable("restaurantId") Long restaurantId, 
 																					@PathVariable("categoryId") Long categoryId) {
 		return new ResponseEntity<>(menuItemService.getMenuItemByRestaurantAndCategory(restaurantId, categoryId), HttpStatus.OK);
+	}
+	
+	@GetMapping("/getAllMenuItems")
+
+	
+	public ResponseEntity<List<MenuItemResponse>> getAllMenuItems() {
+		return new ResponseEntity<>(menuItemService.getAllMenuItems(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/image")
+	public ResponseEntity<byte[]> getMenuItemImage(@PathVariable("id") Long id) {
+	    byte[] image = menuItemService.getImageById(id);
+
+	    return ResponseEntity.ok()
+	            .contentType(MediaType.IMAGE_JPEG)
+	            .body(image);
+	}
+	
+	@GetMapping("/restaurant/{restaurantId}")
+	public ResponseEntity<List<MenuItemResponse>> getMenuItemByRestaurantId(
+	        @PathVariable("restaurantId") Long restaurantId) {
+
+	    return ResponseEntity.ok(
+	            menuItemService.getMenuItemByRestaurantId(restaurantId)
+	    );
+	}
+	
+	@DeleteMapping("/delete/{menuId}")
+	public ResponseEntity<Void> removeMenuItem(@PathVariable("menuId") Long menuId) {
+		menuItemService.deleteMenuItem(menuId);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/update/{id}")
+	public ResponseEntity<?> updateMenuItem(@PathVariable("id") Long id,
+									@ModelAttribute MenuItemRequest menuItemRequest,
+									@RequestParam(value = "image", required = false) MultipartFile image) {
+		return ResponseEntity.ok(menuItemService.updateMenuItem(id, menuItemRequest, image));
 	}
 
 }

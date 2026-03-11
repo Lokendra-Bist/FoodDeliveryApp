@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { IoCartOutline, IoSearchSharp } from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
 import foodfusion from "../../assets/foodfusion.webp";
 
 const Navbar = () => {
@@ -57,8 +57,6 @@ const Navbar = () => {
           </ul>
 
           <div className="d-flex align-items-center">
-            <IoSearchSharp className="me-3 fs-5" />
-
             <div className="position-relative me-3">
               <NavLink to="/cart">
                 <IoCartOutline className="fs-5" />

@@ -1,94 +1,77 @@
-import { useEffect, useState } from "react";
-import { MenuCard } from "../../components/menu/MenuCard";
+import { useEffect, useState, useMemo } from "react";
+import { Container, Row, Col } from "react-bootstrap";
 import { getAllMenuItems } from "../../api/menuApi";
-import {
-  Container,
-  Row,
-  Col,
-  ButtonGroup,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { MenuCard } from "../../components/menu/MenuCard";
+import { MenuFilters } from "../../components/menu/MenuFilter";
 
 export const MenuList = () => {
   const [menuData, setMenuData] = useState([]);
-  const [foodType, setFoodType] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [foodTypes, setFoodTypes] = useState([]);
   const [selectedFoodType, setSelectedFoodType] = useState("ALL");
-  const [restaurantSearch, setRestaurantSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [itemSearch, setItemSearch] = useState("");
 
   useEffect(() => {
     const fetchMenuData = async () => {
-      try {
-        const response = await getAllMenuItems();
-        setMenuData(response);
-        setFilteredData(response);
-
-        setFoodType(["ALL", ...new Set(response.map((item) => item.foodType))]);
-      } catch (error) {
-        console.error("Error fetching menu data:", error);
-      }
+      const response = await getAllMenuItems();
+      setMenuData(response);
+      setFoodTypes(["ALL", ...new Set(response.map((i) => i.foodType))]);
     };
-
     fetchMenuData();
   }, []);
 
-  const applyFilters = (foodTypeFilter, restaurantQuery) => {
-    let data = [...menuData];
+  const filteredData = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    const itemQuery = itemSearch.toLowerCase().trim();
 
-    if (foodTypeFilter !== "ALL") {
-      data = data.filter((item) => item.foodType === foodTypeFilter);
-    }
+    return menuData.filter((item) => {
+      const foodType = item.foodType?.toLowerCase() || "";
+      const restaurant = item.restaurantName?.toLowerCase() || "";
+      const itemName = item.name?.toLowerCase() || "";
 
-    if (restaurantQuery.trim() !== "") {
-      const query = restaurantQuery.toLowerCase();
-      data = data.filter((item) =>
-        item.restaurantName.toLowerCase().includes(query)
-      );
-    }
+      const matchesFoodType =
+        selectedFoodType === "ALL" ||
+        foodType === selectedFoodType.toLowerCase();
 
-    setFilteredData(data);
-  };
+      const matchesGeneralSearch =
+        !query || restaurant.includes(query) || foodType.includes(query);
 
-  const handleFoodTypeFilter = (type) => {
-    setSelectedFoodType(type);
-    applyFilters(type, restaurantSearch);
-  };
+      const matchesItemSearch = !itemQuery || itemName.includes(itemQuery);
 
-  const handleRestaurantSearch = (e) => {
-    const query = e.target.value;
-    setRestaurantSearch(query);
-    applyFilters(selectedFoodType, query);
-  };
+      return matchesFoodType && matchesGeneralSearch && matchesItemSearch;
+    });
+  }, [menuData, selectedFoodType, searchQuery, itemSearch]);
 
   return (
-    <Container className="mt-4">
-      <ButtonGroup className="mb-3 me-3">
-        {foodType.map((type) => (
-          <Button
-            key={type}
-            variant={selectedFoodType === type ? "primary" : "outline-primary"}
-            onClick={() => handleFoodTypeFilter(type)}
-          >
-            {type}
-          </Button>
-        ))}
-      </ButtonGroup>
+    <Container fluid className="mt-4">
+      <Row className="gx-4">
+        <Col xs={12} md={3} lg={2} className="mb-3">
+          <MenuFilters
+            foodTypes={foodTypes}
+            selectedFoodType={selectedFoodType}
+            onFoodTypeChange={setSelectedFoodType}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            itemSearch={itemSearch}
+            onItemSearchChange={setItemSearch}
+          />
+        </Col>
 
-      <Form.Control
-        type="text"
-        placeholder="Search by restaurant..."
-        value={restaurantSearch}
-        onChange={handleRestaurantSearch}
-        className="mb-3"
-      />
-
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {filteredData.map((menuItem) => (
-          <Col key={menuItem.id}>
-            <MenuCard menuItem={menuItem} />
-          </Col>
-        ))}
+        <Col xs={12} md={9} lg={10}>
+          <Row xs={1} sm={2} lg={3} className="g-4">
+            {filteredData.length > 0 ? (
+              filteredData.map((menuItem) => (
+                <Col key={menuItem.id}>
+                  <MenuCard menuItem={menuItem} />
+                </Col>
+              ))
+            ) : (
+              <div className="text-center text-muted mt-5">
+                <h6>No matching food found..!!</h6>
+              </div>
+            )}
+          </Row>
+        </Col>
       </Row>
     </Container>
   );

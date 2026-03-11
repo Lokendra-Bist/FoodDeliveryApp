@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.loken.entity.Restaurant;
@@ -22,9 +23,10 @@ import lombok.RequiredArgsConstructor;
 public class RestaurantServiceImpl implements IRestaurantMgmtService {
 
 	private final IRestaurantRepository restaurantRepo;
-	
+
 	@Override
-	public RestaurantResponse addRestaurant(RestaurantRequest request, MultipartFile coverPhoto, MultipartFile restaurantPhoto) {
+	public RestaurantResponse addRestaurant(RestaurantRequest request, MultipartFile coverPhoto,
+			MultipartFile restaurantPhoto) {
 		byte[] coverPhotoBytes = null;
 		byte[] restaurantPhotobytes = null;
 		try {
@@ -40,17 +42,68 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 
 	@Override
 	public List<RestaurantResponse> getAllRestaurants() {
-		return restaurantRepo.findAll()
-							 .stream()
-							 .map(RestaurantMapper::toResponse)
-							 .collect(Collectors.toList());
+		return restaurantRepo.findAll().stream().map(RestaurantMapper::toResponse).collect(Collectors.toList());
 	}
 
 	@Override
 	public RestaurantResponse getRestaurantById(Long id) {
-	    Restaurant restaurant = restaurantRepo.findById(id)
-	        .orElseThrow(() -> new ResourceNotFoundException("Restaurant Not Found With Id: " + id));
-	    return RestaurantMapper.toResponse(restaurant);
+		Restaurant restaurant = restaurantRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Restaurant Not Found With Id: " + id));
+		return RestaurantMapper.toResponse(restaurant);
+	}
+
+	@Override
+	public byte[] getImageById(Long id) {
+		Restaurant restaurant = restaurantRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Restaurant Not FOund!"));
+		if (restaurant.getRestaurantPhoto() == null) {
+			throw new ResourceNotFoundException("Restaurant Image Not Found!");
+		}
+		return restaurant.getRestaurantPhoto();
+	}
+
+	@Override
+	public RestaurantResponse updateRestaurant(Long id, RestaurantRequest restaurantRequest,
+			MultipartFile restaurantPhoto, MultipartFile coverPhoto) {
+
+		Restaurant restaurant = restaurantRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+
+		restaurant.setName(restaurantRequest.getName());
+		restaurant.setAddress(restaurantRequest.getAddress());
+		restaurant.setPhoneNumber(restaurantRequest.getPhoneNumber());
+		restaurant.setDescription(restaurantRequest.getDescription());
+		restaurant.setCloseTime(restaurantRequest.getCloseTime());
+		restaurant.setOpenTime(restaurantRequest.getOpenTime());
+		restaurant.setStartTime(restaurantRequest.getStartTime());
+		restaurant.setEndTime(restaurantRequest.getEndTime());
+		restaurant.setLatitude(restaurantRequest.getLatitude());
+		restaurant.setLongitude(restaurantRequest.getLongitude());
+
+		try {
+			if (coverPhoto != null && !coverPhoto.isEmpty()) {
+				restaurant.setCoverPhoto(coverPhoto.getBytes());
+			}
+
+			if (restaurantPhoto != null && !restaurantPhoto.isEmpty()) {
+				restaurant.setRestaurantPhoto(restaurantPhoto.getBytes());
+			}
+
+		} catch (IOException e) {
+			throw new PhotoProcessingException("Cannot read photo bytes");
+		}
+
+		restaurantRepo.save(restaurant);
+
+		return RestaurantMapper.toResponse(restaurant);
+	}
+
+	@Override
+	@Transactional
+	public void deleteRestaurant(Long id) {
+		Restaurant restaurant = restaurantRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Restaurant Not Found"));
+		restaurantRepo.delete(restaurant);
 	}
 
 }

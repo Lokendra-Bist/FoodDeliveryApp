@@ -1,13 +1,16 @@
-	package com.loken.controller;
+package com.loken.controller;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,29 +27,48 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/restaurant")
 public class RestaurantController {
-	
-	private final IRestaurantMgmtService restaurantService;
-	
-	@PostMapping("/registerRestaurant")
-	public ResponseEntity<RestaurantResponse> addRestaurant(
-	        @RequestPart("restaurant") RestaurantRequest request,
-	        @RequestPart("coverPhoto") MultipartFile coverPhoto,
-	        @RequestPart("restaurantPhoto") MultipartFile restaurantPhoto) {
 
-	    return new ResponseEntity<>(
-	            restaurantService.addRestaurant(request, coverPhoto, restaurantPhoto),
-	            HttpStatus.OK
-	    );
+	private final IRestaurantMgmtService restaurantService;
+
+	@PostMapping("/registerRestaurant")
+	public ResponseEntity<RestaurantResponse> addRestaurant(@RequestPart("restaurant") RestaurantRequest request,
+			@RequestPart("coverPhoto") MultipartFile coverPhoto,
+			@RequestPart("restaurantPhoto") MultipartFile restaurantPhoto) {
+
+		return new ResponseEntity<>(restaurantService.addRestaurant(request, coverPhoto, restaurantPhoto),
+				HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/getAllRestaurant")
 	public ResponseEntity<List<RestaurantResponse>> getAllRestaurants() {
 		return new ResponseEntity<>(restaurantService.getAllRestaurants(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/getRestaurantById/{id}")
 	public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable("id") Long id) {
 		return new ResponseEntity<>(restaurantService.getRestaurantById(id), HttpStatus.OK);
+	}
+
+	@GetMapping("/{id}/image")
+	public ResponseEntity<byte[]> getRestaurantImageById(@PathVariable("id") Long id) {
+		byte[] image = restaurantService.getImageById(id);
+
+		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+	}
+
+	@PutMapping("/update/{id}")
+	public ResponseEntity<RestaurantResponse> updateRestaurant(@PathVariable("id") Long id,
+			@RequestPart("restaurant") RestaurantRequest restaurantRequest,
+			@RequestPart(name = "restaurantPhoto", required = false) MultipartFile restaurantPhoto,
+			@RequestPart(name = "coverPhoto", required = false) MultipartFile coverPhoto) {
+		return ResponseEntity
+				.ok(restaurantService.updateRestaurant(id, restaurantRequest, restaurantPhoto, coverPhoto));
+	}
+
+	@DeleteMapping("/deleteRestaurant/{id}")
+	public ResponseEntity<Void> deleteRestaurant(@PathVariable("id") Long id) {
+		restaurantService.deleteRestaurant(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }

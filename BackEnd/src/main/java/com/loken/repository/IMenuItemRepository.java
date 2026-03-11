@@ -24,4 +24,6 @@ public interface IMenuItemRepository extends JpaRepository<MenuItem, Long> {
 	    List<Category> findDistinctCategoriesByRestaurant(
 	            @Param("restaurantId") Long restaurantId
 	    );
+	
+	List<MenuItem> findByRestaurantId(Long id);
 }

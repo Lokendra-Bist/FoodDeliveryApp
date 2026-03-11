@@ -41,6 +41,9 @@ public class MenuItemMapper {
         	res.setCategoryId(item.getCategory().getId());
         	res.setCategoryName(item.getCategory().getName());       
         }
+        if(item.getFoodType() != null) {
+        	res.setFoodType(item.getFoodType());       
+        }
         return res;
     }
 

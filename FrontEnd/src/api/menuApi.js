@@ -27,11 +27,11 @@ export const addMenuItem = async (menuItem) => {
 
 export const getMenuItemsByRestaurantIdAndCategoryId = async (
   restaurantId,
-  categoryId
+  categoryId,
 ) => {
   try {
     const response = await api.get(
-      `/restaurant/${restaurantId}/category/${categoryId}`
+      `/restaurant/${restaurantId}/category/${categoryId}`,
     );
     return response.data;
   } catch (error) {
@@ -46,6 +46,47 @@ export const getAllMenuItems = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching all menu items:", error);
+    throw error;
+  }
+};
+
+export const getMenuItemByRestaurant = async (restaurantId) => {
+  try {
+    const response = await api.get(`/restaurant/${restaurantId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching menu items by restaurant:", error);
+    throw error;
+  }
+};
+
+export const deleteMenuItem = async (menuId) => {
+  try {
+    const response = await api.delete(`/delete/${menuId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting menu item:", error);
+    throw error;
+  }
+};
+
+export const updateMenuItemById = async (menuId, menuItem) => {
+  try {
+    const data = new FormData();
+    data.append("name", menuItem.name);
+    data.append("description", menuItem.description);
+    data.append("price", menuItem.price);
+    data.append("discountPrice", menuItem.discountPrice);
+    data.append("categoryId", menuItem.categoryId);
+    data.append("restaurantId", menuItem.restaurantId);
+    data.append("foodType", menuItem.foodType);
+    if (menuItem.image) {
+      data.append("image", menuItem.image);
+    }
+    const response = await api.put(`/update/${menuId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating menu item:", error);
     throw error;
   }
 };

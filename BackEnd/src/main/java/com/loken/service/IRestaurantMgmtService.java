@@ -15,4 +15,10 @@ public interface IRestaurantMgmtService {
 	
 	RestaurantResponse getRestaurantById(Long id);
 	
+	byte[] getImageById(Long id);
+	
+	RestaurantResponse updateRestaurant(Long id, RestaurantRequest restaurantRequest, MultipartFile restaurantPhoto, MultipartFile coverPhoto);
+	
+	void deleteRestaurant(Long id);
+	
 }

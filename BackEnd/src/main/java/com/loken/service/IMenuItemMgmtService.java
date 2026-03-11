@@ -14,4 +14,17 @@ public interface IMenuItemMgmtService {
 	List<MenuItemResponse> getItemByCategory(Long id);
 	
 	List<MenuItemResponse> getMenuItemByRestaurantAndCategory(Long restaurantId, Long categoryId);
+	
+	List<MenuItemResponse> getAllMenuItems();
+	
+	byte[] getImageById(Long id);
+	
+	List<MenuItemResponse> getMenuItemByRestaurantId(Long id);
+	
+	void deleteMenuItem(Long menuId);
+	
+	MenuItemResponse updateMenuItem(Long menuId,
+            MenuItemRequest request,
+            MultipartFile imageFile);
+
 }
