@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -114,34 +118,60 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 	@Override
 	@Transactional
 	public MenuItemResponse updateMenuItem(Long menuId, MenuItemRequest request, MultipartFile imageFile) {
-	    MenuItem existing = menuItemRepo.findById(menuId)
-	            .orElseThrow(() -> new RuntimeException("Menu item not found"));
+		MenuItem existing = menuItemRepo.findById(menuId)
+				.orElseThrow(() -> new RuntimeException("Menu item not found"));
 
-	    Restaurant restaurant = restaurantRepo.findById(request.getRestaurantId())
-	            .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+		Restaurant restaurant = restaurantRepo.findById(request.getRestaurantId())
+				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-	    Category category = categoryRepo.findById(request.getCategoryId())
-	            .orElseThrow(() -> new RuntimeException("Category not found"));
+		Category category = categoryRepo.findById(request.getCategoryId())
+				.orElseThrow(() -> new RuntimeException("Category not found"));
 
-	    existing.setName(request.getName());
-	    existing.setDescription(request.getDescription());
-	    existing.setPrice(request.getPrice());
-	    existing.setDiscountPrice(request.getDiscountPrice());
-	    existing.setFoodType(request.getFoodType());
-	    existing.setRestaurant(restaurant);
-	    existing.setCategory(category);
+		existing.setName(request.getName());
+		existing.setDescription(request.getDescription());
+		existing.setPrice(request.getPrice());
+		existing.setDiscountPrice(request.getDiscountPrice());
+		existing.setFoodType(request.getFoodType());
+		existing.setRestaurant(restaurant);
+		existing.setCategory(category);
 
-	    if (imageFile != null && !imageFile.isEmpty()) {
-	        try {
-	            existing.setImage(imageFile.getBytes());
-	        } catch (IOException e) {
-	            throw new RuntimeException("Failed to read image bytes", e);
-	        }
-	    }
+		if (imageFile != null && !imageFile.isEmpty()) {
+			try {
+				existing.setImage(imageFile.getBytes());
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to read image bytes", e);
+			}
+		}
 
-	    MenuItem saved = menuItemRepo.save(existing); 
+		MenuItem saved = menuItemRepo.save(existing);
 
-	    return MenuItemMapper.toResponse(saved);
+		return MenuItemMapper.toResponse(saved);
+	}
+
+	@Override
+	@Transactional
+	public Page<MenuItemResponse> getMenuItems(int page, int size, String search) {
+		Pageable pageable = PageRequest.of(page, size);
+
+		Page<MenuItem> menuItemPage = (search != null && !search.isEmpty())
+				? menuItemRepo.findByNameContainingIgnoreCase(search, pageable)
+				: menuItemRepo.findAll(pageable);
+
+		return menuItemPage.map(MenuItemMapper::toResponse);
+	}
+
+	@Override
+	@Transactional
+	public Page<MenuItemResponse> getMenuItem(int page, int size, String search, String foodType, String sortBy,
+			String sortDir) {
+
+		Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+		Pageable pageable = PageRequest.of(page, size, sort);
+
+		Page<MenuItem> menuItemPage = menuItemRepo.searchAndFilter(search, foodType, pageable);
+
+		return menuItemPage.map(MenuItemMapper::toResponse);
 	}
 
 }

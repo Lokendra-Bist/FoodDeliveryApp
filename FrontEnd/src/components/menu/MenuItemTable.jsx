@@ -14,9 +14,16 @@ import { EditMenuItem } from "./EditMenuItem";
 import { deleteMenuItem, updateMenuItemById } from "../../api/menuApi";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import { AddMenu } from "../../pages/menu/AddMenu";
 
-export const MenuItemTable = ({ restaurant, menuItems, setMenuItems }) => {
+export const MenuItemTable = ({
+  restaurant,
+  menuItems,
+  setMenuItems,
+  refreshMenuItems,
+}) => {
   const [showEditMenu, setShowEditMenu] = useState(false);
+  const [showAddMenu, setShowAddMenu] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState(null);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -95,12 +102,18 @@ export const MenuItemTable = ({ restaurant, menuItems, setMenuItems }) => {
               </div>
             </Col>
 
-            <Col md={6}>
+            <Col md={4}>
               <Form.Control
                 placeholder="Search menu items..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+            </Col>
+
+            <Col md={2} className="text-end">
+              <Button variant="success" onClick={() => setShowAddMenu(true)}>
+                + Add Menu
+              </Button>
             </Col>
           </Row>
         </Card.Body>
@@ -208,6 +221,15 @@ export const MenuItemTable = ({ restaurant, menuItems, setMenuItems }) => {
           handleClose={() => setShowEditMenu(false)}
           menuItem={selectedMenuItem}
           onSave={updateMenuItem}
+          restaurantId={restaurant.id}
+        />
+      )}
+
+      {showAddMenu && (
+        <AddMenu
+          show={showAddMenu}
+          handleClose={() => setShowAddMenu(false)}
+          onSuccess={refreshMenuItems}
           restaurantId={restaurant.id}
         />
       )}

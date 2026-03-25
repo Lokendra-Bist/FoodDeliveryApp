@@ -1,17 +1,9 @@
 import { useRef, useState } from "react";
-import {
-  Form,
-  Button,
-  Image,
-  Container,
-  Card,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Form, Button, Image, Row, Col, Modal } from "react-bootstrap";
 import { addRestaurant } from "../../api/restaurantApi";
 import toast from "react-hot-toast";
 
-export const AddRestaurant = () => {
+export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
   const [restaurantData, setRestaurantData] = useState({
     name: "",
     description: "",
@@ -26,6 +18,7 @@ export const AddRestaurant = () => {
     coverPhoto: null,
     restaurantPhoto: null,
   });
+
   const [errors, setErrors] = useState({});
   const [coverPhotoPreview, setCoverPhotoPreview] = useState(null);
   const [restaurantPhotoPreview, setRestaurantPhotoPreview] = useState(null);
@@ -35,6 +28,7 @@ export const AddRestaurant = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setRestaurantData((prev) => ({
       ...prev,
       [name]: value,
@@ -90,25 +84,24 @@ export const AddRestaurant = () => {
       newErrors.address = "Address is too short";
     }
 
-    if (!restaurantData.phoneNumber) {
+    if (!restaurantData.phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone number is required";
     } else if (!/^\d{7,15}$/.test(restaurantData.phoneNumber)) {
       newErrors.phoneNumber = "Invalid phone number";
     }
 
-    if (
-      restaurantData.latitude === "" ||
-      restaurantData.latitude < -90 ||
-      restaurantData.latitude > 90
-    ) {
+    const lat = parseFloat(restaurantData.latitude);
+    const lng = parseFloat(restaurantData.longitude);
+
+    if (!restaurantData.latitude) {
+      newErrors.latitude = "Latitude is required";
+    } else if (lat < -90 || lat > 90) {
       newErrors.latitude = "Latitude must be between -90 and 90";
     }
 
-    if (
-      restaurantData.longitude === "" ||
-      restaurantData.longitude < -180 ||
-      restaurantData.longitude > 180
-    ) {
+    if (!restaurantData.longitude) {
+      newErrors.longitude = "Longitude is required";
+    } else if (lng < -180 || lng > 180) {
       newErrors.longitude = "Longitude must be between -180 and 180";
     }
 
@@ -125,19 +118,6 @@ export const AddRestaurant = () => {
       newErrors.closeTime = "Close time must be after open time";
     }
 
-    if (!restaurantData.startTime) {
-      newErrors.startTime = "Delivery start time is required";
-    }
-
-    if (!restaurantData.endTime) {
-      newErrors.endTime = "Delivery end time is required";
-    } else if (
-      restaurantData.startTime &&
-      restaurantData.endTime <= restaurantData.startTime
-    ) {
-      newErrors.endTime = "Delivery end time must be after start time";
-    }
-
     if (!restaurantData.coverPhoto) {
       newErrors.coverPhoto = "Cover photo is required";
     }
@@ -147,40 +127,54 @@ export const AddRestaurant = () => {
     }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
+  };
+
+  const resetForm = () => {
+    setRestaurantData({
+      name: "",
+      description: "",
+      address: "",
+      phoneNumber: "",
+      latitude: "",
+      longitude: "",
+      openTime: "",
+      closeTime: "",
+      startTime: "",
+      endTime: "",
+      coverPhoto: null,
+      restaurantPhoto: null,
+    });
+
+    setErrors({});
+    setCoverPhotoPreview(null);
+    setRestaurantPhotoPreview(null);
+
+    if (coverPhotoRef.current) coverPhotoRef.current.value = null;
+    if (restaurantPhotoRef.current) restaurantPhotoRef.current.value = null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error("Please fix validation errors");
+      toast.error("Please correct the highlighted fields");
       return;
     }
 
     try {
       await addRestaurant(restaurantData);
+
       toast.success("Restaurant added successfully!");
 
-      setRestaurantData({
-        name: "",
-        description: "",
-        address: "",
-        phoneNumber: "",
-        latitude: "",
-        longitude: "",
-        openTime: "",
-        closeTime: "",
-        startTime: "",
-        endTime: "",
-        coverPhoto: null,
-        restaurantPhoto: null,
-      });
-      setErrors({});
-      setCoverPhotoPreview(null);
-      setRestaurantPhotoPreview(null);
-      if (coverPhotoRef.current) coverPhotoRef.current.value = null;
-      if (restaurantPhotoRef.current) restaurantPhotoRef.current.value = null;
+      resetForm();
+
+      if (onRestaurantAdded) {
+        onRestaurantAdded();
+      }
+
+      onHide();
     } catch (error) {
       console.error(error);
       toast.error("Failed to add restaurant");
@@ -188,231 +182,191 @@ export const AddRestaurant = () => {
   };
 
   return (
-    <Container className="my-5">
-      <Card className="shadow-sm p-4">
-        <Card.Body>
-          <h2 className="mb-4 text-center text-success">Add New Restaurant</h2>
+    <Modal show={show} onHide={onHide} size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Add New Restaurant</Modal.Title>
+      </Modal.Header>
 
-          <Form onSubmit={handleSubmit}>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Restaurant Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={restaurantData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.name}
-                  </Form.Control.Feedback>
-                </Form.Group>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Restaurant Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={restaurantData.name}
+                  onChange={handleChange}
+                  isInvalid={!!errors.name}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.name}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="description"
-                    maxLength={200}
-                    value={restaurantData.description}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Text muted>
-                    {restaurantData.description.length}/200 characters
-                  </Form.Text>
-                  <Form.Control.Feedback type="invalid">
-                    {errors.description}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="description"
+                  value={restaurantData.description}
+                  onChange={handleChange}
+                  isInvalid={!!errors.description}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.description}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Address</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="address"
-                    value={restaurantData.address}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.address}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="address"
+                  value={restaurantData.address}
+                  onChange={handleChange}
+                  isInvalid={!!errors.address}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.address}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Phone Number</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="phoneNumber"
-                    value={restaurantData.phoneNumber}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.phoneNumber}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Phone Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="phoneNumber"
+                  value={restaurantData.phoneNumber}
+                  onChange={handleChange}
+                  isInvalid={!!errors.phoneNumber}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.phoneNumber}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
 
-                <Row>
-                  <Col>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-bold">Latitude</Form.Label>
-                      <Form.Control
-                        type="number"
-                        step="any"
-                        min="-90"
-                        max="90"
-                        name="latitude"
-                        value={restaurantData.latitude}
-                        onChange={handleChange}
-                        required
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.latitude}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Latitude</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="any"
+                  name="latitude"
+                  value={restaurantData.latitude}
+                  onChange={handleChange}
+                  isInvalid={!!errors.latitude}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.latitude}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                  <Col>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-bold">Longitude</Form.Label>
-                      <Form.Control
-                        type="number"
-                        step="any"
-                        min="-180"
-                        max="180"
-                        name="longitude"
-                        value={restaurantData.longitude}
-                        onChange={handleChange}
-                        required
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.longitude}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                </Row>
+              <Form.Group className="mb-3">
+                <Form.Label>Longitude</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="any"
+                  name="longitude"
+                  value={restaurantData.longitude}
+                  onChange={handleChange}
+                  isInvalid={!!errors.longitude}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.longitude}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Open Time</Form.Label>
-                  <Form.Control
-                    type="time"
-                    name="openTime"
-                    value={restaurantData.openTime}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.openTime}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Open Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name="openTime"
+                      value={restaurantData.openTime}
+                      onChange={handleChange}
+                      isInvalid={!!errors.openTime}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.openTime}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Close Time</Form.Label>
-                  <Form.Control
-                    type="time"
-                    name="closeTime"
-                    value={restaurantData.closeTime}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.closeTime}
-                  </Form.Control.Feedback>
-                </Form.Group>
+                <Col>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Close Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      name="closeTime"
+                      value={restaurantData.closeTime}
+                      onChange={handleChange}
+                      isInvalid={!!errors.closeTime}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.closeTime}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">
-                    Delivery Time From
-                  </Form.Label>
-                  <Form.Control
-                    type="time"
-                    name="startTime"
-                    value={restaurantData.startTime}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.startTime}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <Row>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Cover Photo</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="coverPhoto"
+                  ref={coverPhotoRef}
+                  onChange={handlePhotoChange}
+                  isInvalid={!!errors.coverPhoto}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.coverPhoto}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Delivery Time To</Form.Label>
-                  <Form.Control
-                    type="time"
-                    name="endTime"
-                    value={restaurantData.endTime}
-                    onChange={handleChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.endTime}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+              {coverPhotoPreview && <Image src={coverPhotoPreview} thumbnail />}
+            </Col>
 
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Cover Photo</Form.Label>
-                  <Form.Control
-                    type="file"
-                    name="coverPhoto"
-                    ref={coverPhotoRef}
-                    onChange={handlePhotoChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.coverPhoto}
-                  </Form.Control.Feedback>
-                </Form.Group>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Restaurant Photo</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="restaurantPhoto"
+                  ref={restaurantPhotoRef}
+                  onChange={handlePhotoChange}
+                  isInvalid={!!errors.restaurantPhoto}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.restaurantPhoto}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                {coverPhotoPreview && (
-                  <Image
-                    src={coverPhotoPreview}
-                    thumbnail
-                    className="mb-3"
-                    style={{ maxHeight: 200 }}
-                  />
-                )}
+              {restaurantPhotoPreview && (
+                <Image src={restaurantPhotoPreview} thumbnail />
+              )}
+            </Col>
+          </Row>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Restaurant Photo</Form.Label>
-                  <Form.Control
-                    type="file"
-                    name="restaurantPhoto"
-                    ref={restaurantPhotoRef}
-                    onChange={handlePhotoChange}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.restaurantPhoto}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <div className="text-end mt-3">
+            <Button variant="secondary" className="me-2" onClick={onHide}>
+              Cancel
+            </Button>
 
-                {restaurantPhotoPreview && (
-                  <Image
-                    src={restaurantPhotoPreview}
-                    thumbnail
-                    className="mb-3"
-                    style={{ maxHeight: 200 }}
-                  />
-                )}
-              </Col>
-            </Row>
-
-            <div className="text-center mt-4">
-              <Button type="submit" variant="success" size="lg">
-                Add Restaurant
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
-    </Container>
+            <Button type="submit" variant="success">
+              Add Restaurant
+            </Button>
+          </div>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 };

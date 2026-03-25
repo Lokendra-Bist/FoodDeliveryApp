@@ -77,4 +77,15 @@ public class GlobalExceptionHandler {
 		 return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
 	}
 	
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<ErrorResponse> badRequestException(BadRequestException ex) {
+		 ErrorResponse errorResponse = new ErrorResponse(
+	                LocalDateTime.now(),
+	                HttpStatus.CONFLICT.value(),
+	                HttpStatus.CONFLICT.getReasonPhrase(),
+	                ex.getMessage()
+	        );
+		 return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+	}
+	
 }

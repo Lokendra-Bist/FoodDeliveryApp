@@ -90,3 +90,33 @@ export const updateMenuItemById = async (menuId, menuItem) => {
     throw error;
   }
 };
+
+export const getMenuItems = async (page, size, search) => {
+  try {
+    const response = await api.get("/getMenuItems", {
+      params: {
+        page,
+        size,
+        search,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching menu item:", error);
+    throw error;
+  }
+};
+
+export const getMenuItem = async ({
+  page,
+  size,
+  search,
+  foodType,
+  sortBy,
+  sortDir,
+}) => {
+  const response = await api.get("/getMenuItem", {
+    params: { page, size, search, foodType, sortBy, sortDir },
+  });
+  return response.data;
+};

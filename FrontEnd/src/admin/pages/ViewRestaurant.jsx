@@ -17,14 +17,22 @@ export const ViewRestaurant = () => {
 
   const [showEditModal, setShowEditModal] = useState(false);
 
+  const fetchMenuItems = async () => {
+    try {
+      const data = await getMenuItemByRestaurant(id);
+      setMenuItems(data);
+    } catch (err) {
+      console.error("Failed to fetch menu items", err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const resData = await getRestaurantById(id);
         setRestaurant(resData);
 
-        const menuData = await getMenuItemByRestaurant(id);
-        setMenuItems(menuData);
+        await fetchMenuItems();
       } catch (err) {
         console.error("Failed to load restaurant", err);
       } finally {
@@ -134,9 +142,9 @@ export const ViewRestaurant = () => {
 
       <MenuItemTable
         restaurant={restaurant}
-        setRestaurant={setRestaurant}
         menuItems={menuItems}
         setMenuItems={setMenuItems}
+        refreshMenuItems={fetchMenuItems}
       />
 
       <EditRestaurant

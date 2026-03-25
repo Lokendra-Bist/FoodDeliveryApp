@@ -15,8 +15,8 @@ export const AdminSidebar = () => {
           Restaurants
         </Nav.Link>
 
-        <Nav.Link as={Link} to="/admin/menu-items" className="text-white">
-          Menu Items
+        <Nav.Link as={Link} to="/admin/view_category" className="text-white">
+          Category
         </Nav.Link>
 
         <Nav.Link as={Link} to="/admin/orders" className="text-white">
