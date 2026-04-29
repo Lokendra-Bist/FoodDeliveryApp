@@ -1,9 +1,16 @@
-import { Card, Row, Col, Badge } from "react-bootstrap";
+import { Card, Row, Col, Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 export const MenuCard = ({ menuItem }) => {
+  const { addToCart } = useCart();
+  const { token, openAuthModal } = useAuth();
+
   const price = Number(menuItem.price);
   const discountPrice = Number(menuItem.discountPrice);
+
+  const finalPrice = discountPrice > 0 ? price - discountPrice : price;
 
   const discountPercent =
     discountPrice > 0 ? Math.round((discountPrice / price) * 100) : 0;
@@ -12,9 +19,27 @@ export const MenuCard = ({ menuItem }) => {
     VEG: "success",
     NON_VEG: "danger",
     EGG: "warning",
-    VEGAR: "info",
+    VEGAN: "info",
   };
   const badgeColor = foodTypeColors[menuItem.foodType] || "secondary";
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      openAuthModal();
+      return;
+    }
+
+    addToCart({
+      id: menuItem.id,
+      name: menuItem.name,
+      price: finalPrice,
+      restaurantId: menuItem.restaurantId,
+      image: `http://localhost:2058/FoodDeliveryApp/api/menuItem/${menuItem.id}/image`,
+    });
+  };
 
   return (
     <Link
@@ -68,6 +93,12 @@ export const MenuCard = ({ menuItem }) => {
                   {discountPercent}% OFF
                 </Badge>
               )}
+
+              <div className="mt-3">
+                <Button variant="primary" onClick={handleAddToCart}>
+                  Add to Cart
+                </Button>
+              </div>
             </Card.Body>
           </Col>
         </Row>

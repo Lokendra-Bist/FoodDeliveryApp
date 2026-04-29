@@ -1,12 +1,8 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://localhost:2058/FoodDeliveryApp/api/category",
-});
+import api from "./axios";
 
 export const addNewCategory = async (categoryData) => {
   try {
-    const response = await api.post("saveCategory", categoryData);
+    const response = await api.post("/category/saveCategory", categoryData);
     return response.data;
   } catch (error) {
     console.error("Error adding category:", error);
@@ -16,7 +12,7 @@ export const addNewCategory = async (categoryData) => {
 
 export const getAllCategories = async () => {
   try {
-    const response = await api.get("getAllCategory");
+    const response = await api.get("/category/getAllCategory");
     return response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -26,7 +22,9 @@ export const getAllCategories = async () => {
 
 export const getCategoryByRestaurantId = async (restaurantId) => {
   try {
-    const response = await api.get(`categoryByRestaurant/${restaurantId}`);
+    const response = await api.get(
+      `/category/categoryByRestaurant/${restaurantId}`,
+    );
 
     return response.data;
   } catch (error) {
@@ -40,7 +38,7 @@ export const getCategoryByRestaurantId = async (restaurantId) => {
 
 export const deleteCategory = async (categoryId) => {
   try {
-    const response = await api.delete(`deleteCategory/${categoryId}`);
+    const response = await api.delete(`/category/deleteCategory/${categoryId}`);
     return response.data;
   } catch (error) {
     console.error(`Error deleting category with ID ${categoryId}:`, error);
@@ -51,7 +49,7 @@ export const deleteCategory = async (categoryId) => {
 export const updateCategory = async (categoryId, categoryData) => {
   try {
     const response = await api.put(
-      `updateCategory/${categoryId}`,
+      `/category/updateCategory/${categoryId}`,
       categoryData,
     );
     return response.data;
@@ -62,7 +60,7 @@ export const updateCategory = async (categoryId, categoryData) => {
 };
 
 export const getAllCategoriesByPagination = async (page, size, search) => {
-  const res = await api.get("/getCategories", {
+  const res = await api.get("/category/getCategories", {
     params: {
       page,
       size,

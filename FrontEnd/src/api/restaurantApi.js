@@ -1,8 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://localhost:2058/FoodDeliveryApp/api/restaurant",
-});
+import api from "./axios";
 
 export const addRestaurant = async (restaurantData) => {
   try {
@@ -16,7 +12,7 @@ export const addRestaurant = async (restaurantData) => {
     coverPhoto && formData.append("coverPhoto", coverPhoto);
     restaurantPhoto && formData.append("restaurantPhoto", restaurantPhoto);
 
-    const response = await api.post("/registerRestaurant", formData);
+    const response = await api.post("/restaurant/registerRestaurant", formData);
     return response;
   } catch (error) {
     console.error("Error adding restaurant:", error);
@@ -26,7 +22,7 @@ export const addRestaurant = async (restaurantData) => {
 
 export const getAllRestaurants = async () => {
   try {
-    const response = await api.get("/getAllRestaurant");
+    const response = await api.get("/restaurant/getAllRestaurant");
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurants:", error);
@@ -36,7 +32,7 @@ export const getAllRestaurants = async () => {
 
 export const getRestaurantById = async (id) => {
   try {
-    const response = await api.get(`/getRestaurantById/${id}`);
+    const response = await api.get(`/restaurant/getRestaurantById/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurant by ID:", error);
@@ -56,7 +52,7 @@ export const updateRestaurant = async (id, restaurantData) => {
     coverPhoto && formData.append("coverPhoto", coverPhoto);
     restaurantPhoto && formData.append("restaurantPhoto", restaurantPhoto);
 
-    const response = await api.put(`/update/${id}`, formData);
+    const response = await api.put(`/restaurant/update/${id}`, formData);
     return response.data;
   } catch (error) {
     console.error("Error updating restaurant:", error);
@@ -66,7 +62,7 @@ export const updateRestaurant = async (id, restaurantData) => {
 
 export const deleteRestaurant = async (id) => {
   try {
-    const response = await api.delete(`/deleteRestaurant/${id}`);
+    const response = await api.delete(`/restaurant/deleteRestaurant/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting restaurant:", error);

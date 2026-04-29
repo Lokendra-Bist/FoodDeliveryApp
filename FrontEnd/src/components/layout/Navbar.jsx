@@ -1,8 +1,23 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
 import foodfusion from "../../assets/foodfusion.webp";
+import { useAuth } from "../../context/AuthContext";
+import { AuthModal } from "../../pages/auth/AuthModel";
+import { useState } from "react";
+import { useCart } from "../../context/CartContext";
 
 const Navbar = () => {
+  const { token, logout } = useAuth();
+  const { navigate } = useNavigate();
+  const [showAuth, setShowAuth] = useState(false);
+
+  const { cart } = useCart();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light py-2 shadow-sm">
       <div className="container">
@@ -59,21 +74,35 @@ const Navbar = () => {
           <div className="d-flex align-items-center">
             <div className="position-relative me-3">
               <NavLink to="/cart">
-                <IoCartOutline className="fs-5" />
+                <IoCartOutline className="fs-5" />{" "}
+                {cart.length > 0 && (
+                  <span
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                    style={{ fontSize: "12px" }}
+                  >
+                    {cart.length}
+                  </span>
+                )}
               </NavLink>
-              {/* {totalQuantity > 0 && (
-                <span
-                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                  style={{ fontSize: "12px" }}
-                >
-                  {totalQuantity}
-                </span>
-              )} */}
             </div>
 
-            <button className="btn btn-outline-warning rounded-pill px-4">
-              Sign in
-            </button>
+            {token ? (
+              <button
+                className="btn btn-danger rounded-pill px-4"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                className="btn btn-outline-warning rounded-pill px-4"
+                onClick={() => setShowAuth(true)}
+              >
+                Sign in
+              </Link>
+            )}
+
+            <AuthModal show={showAuth} handleClose={() => setShowAuth(false)} />
           </div>
         </div>
       </div>
