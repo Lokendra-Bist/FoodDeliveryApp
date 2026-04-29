@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class MenuItemController {
 
 	private final IMenuItemMgmtService menuItemService;
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@PostMapping("/addMenuItem")
 	public ResponseEntity<MenuItemResponse> addMenuItem(@Valid @ModelAttribute MenuItemRequest item,
 			@RequestParam("image") MultipartFile image) {
@@ -52,7 +54,6 @@ public class MenuItemController {
 	}
 
 	@GetMapping("/getAllMenuItems")
-
 	public ResponseEntity<List<MenuItemResponse>> getAllMenuItems() {
 		return new ResponseEntity<>(menuItemService.getAllMenuItems(), HttpStatus.OK);
 	}
@@ -71,12 +72,14 @@ public class MenuItemController {
 		return ResponseEntity.ok(menuItemService.getMenuItemByRestaurantId(restaurantId));
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@DeleteMapping("/delete/{menuId}")
 	public ResponseEntity<Void> removeMenuItem(@PathVariable("menuId") Long menuId) {
 		menuItemService.deleteMenuItem(menuId);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@PutMapping("/update/{id}")
 	public ResponseEntity<?> updateMenuItem(@PathVariable("id") Long id,
 			@ModelAttribute MenuItemRequest menuItemRequest,

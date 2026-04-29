@@ -1,17 +1,29 @@
 package com.loken.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-//@Entity
-@Data
+@Entity
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Users {
 	
 	@Id
@@ -19,19 +31,19 @@ public class Users {
 	private Long id;
 	
 	@Column(nullable = false)
-	private String name;
+	private String userName;
 	
 	@Column(nullable = false, unique = true)
 	private String email;
-	
+
 	@Column(nullable = false, unique = true)
 	private String phoneNumber;
 	
 	@Column(nullable = false)
 	private String password;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "role_id")
-	private Role role;
-
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+	private Set<Role> roles = new HashSet<>();
+	
 }

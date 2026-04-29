@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +34,7 @@ public class CategoryController {
 
 	private final ICategoryMgmtService categoryService;
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@PostMapping("saveCategory")
 	public ResponseEntity<CategoryResponse> saveCategory(@Valid @ModelAttribute CategoryRequest request,
 			@RequestParam("image") MultipartFile image) {
@@ -49,7 +51,8 @@ public class CategoryController {
 			@PathVariable("restaurantId") Long restaurantId) {
 		return new ResponseEntity<>(categoryService.getCategoriesByRestaurant(restaurantId), HttpStatus.OK);
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/deleteCategory/{id}")
 	@Transactional
 	public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
@@ -57,6 +60,7 @@ public class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/updateCategory/{id}")
 	public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("id") Long id,
 			@ModelAttribute CategoryRequest request,
