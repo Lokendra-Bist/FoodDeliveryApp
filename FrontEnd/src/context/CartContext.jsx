@@ -1,44 +1,88 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import {
+  addToCartAPI,
+  clearCartAPI,
+  getCartAPI,
+  removeFromCartAPI,
+} from "../api/cartApi";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const addToCart = (item) => {
-    setCart((prev) => {
-      if (prev.length > 0 && prev[0].restaurantId !== item.restaurantId) {
-        toast.error("You can only order from one restaurant at a time");
+  const { token } = useAuth();
 
-        return prev;
-      }
-
-      const existing = prev.find((i) => i.id === item.id);
-
-      const qtyChange = item.quantity ? item.quantity : 1;
-
-      if (existing) {
-        return prev
-          .map((i) =>
-            i.id === item.id ? { ...i, quantity: i.quantity + qtyChange } : i,
-          )
-          .filter((i) => i.quantity > 0);
-      }
-
-      return [...prev, { ...item, quantity: 1 }];
-    });
+  const fetchCart = async () => {
+    try {
+      const response = await getCartAPI();
+      setCart(response.data.items);
+      setTotalAmount(response.data.totalAmount);
+    } catch (error) {
+      toast.error("Error fetching cart");
+    }
   };
 
-  const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const addToCart = async ({ id, quantity }) => {
+    try {
+      const response = await addToCartAPI({
+        menuItemId: id,
+        quantity,
+      });
+
+      setCart(response.data.items);
+      setTotalAmount(response.data.totalAmount);
+      toast.success("Item added to cart");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error Adding item");
+    }
   };
 
-  const clearCart = () => setCart([]);
+  const removeFromCart = async (id) => {
+    try {
+      const response = await removeFromCartAPI(id);
+      console.log(response);
+
+      await fetchCart();
+      toast.success("Item removed from cart");
+    } catch (error) {
+      error.response?.data?.message || "Error removing item";
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      await clearCartAPI();
+      setCart([]);
+      setTotalAmount(0);
+      toast.success("Cart cleared successfully");
+    } catch (error) {
+      toast.error("Error clearing cart");
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchCart();
+    } else {
+      setCart([]);
+      setTotalAmount(0);
+    }
+  }, [token]);
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, clearCart }}
+      value={{
+        cart,
+        totalAmount,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        fetchCart,
+      }}
     >
       {children}
     </CartContext.Provider>

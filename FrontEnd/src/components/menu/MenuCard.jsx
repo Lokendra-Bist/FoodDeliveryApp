@@ -10,8 +10,6 @@ export const MenuCard = ({ menuItem }) => {
   const price = Number(menuItem.price);
   const discountPrice = Number(menuItem.discountPrice);
 
-  const finalPrice = discountPrice > 0 ? price - discountPrice : price;
-
   const discountPercent =
     discountPrice > 0 ? Math.round((discountPrice / price) * 100) : 0;
 
@@ -34,10 +32,7 @@ export const MenuCard = ({ menuItem }) => {
 
     addToCart({
       id: menuItem.id,
-      name: menuItem.name,
-      price: finalPrice,
-      restaurantId: menuItem.restaurantId,
-      image: `http://localhost:2058/FoodDeliveryApp/api/menuItem/${menuItem.id}/image`,
+      quantity: 1,
     });
   };
 

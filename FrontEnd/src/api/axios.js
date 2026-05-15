@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:2058/FoodDeliveryApp/api",
+  baseURL: "http://localhost:2058/FoodDeliveryApp",
 });
 
 api.interceptors.request.use(

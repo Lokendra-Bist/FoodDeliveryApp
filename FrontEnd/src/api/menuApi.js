@@ -13,7 +13,7 @@ export const addMenuItem = async (menuItem) => {
     if (menuItem.image) {
       data.append("image", menuItem.image);
     }
-    const response = await api.post("/menuItem/addMenuItem", data);
+    const response = await api.post("/api/menuItem/addMenuItem", data);
     return response.data;
   } catch (error) {
     console.error("Error adding menu item:", error);
@@ -27,7 +27,7 @@ export const getMenuItemsByRestaurantIdAndCategoryId = async (
 ) => {
   try {
     const response = await api.get(
-      `/menuItem/restaurant/${restaurantId}/category/${categoryId}`,
+      `/api/menuItem/restaurant/${restaurantId}/category/${categoryId}`,
     );
     return response.data;
   } catch (error) {
@@ -38,7 +38,7 @@ export const getMenuItemsByRestaurantIdAndCategoryId = async (
 
 export const getAllMenuItems = async () => {
   try {
-    const response = await api.get("/menuItem/getAllMenuItems");
+    const response = await api.get("/api/menuItem/getAllMenuItems");
     return response.data;
   } catch (error) {
     console.error("Error fetching all menu items:", error);
@@ -48,7 +48,7 @@ export const getAllMenuItems = async () => {
 
 export const getMenuItemByRestaurant = async (restaurantId) => {
   try {
-    const response = await api.get(`/menuItem/restaurant/${restaurantId}`);
+    const response = await api.get(`/api/menuItem/restaurant/${restaurantId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching menu items by restaurant:", error);
@@ -58,7 +58,7 @@ export const getMenuItemByRestaurant = async (restaurantId) => {
 
 export const deleteMenuItem = async (menuId) => {
   try {
-    const response = await api.delete(`/menuItem/delete/${menuId}`);
+    const response = await api.delete(`/api/menuItem/delete/${menuId}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting menu item:", error);
@@ -79,7 +79,7 @@ export const updateMenuItemById = async (menuId, menuItem) => {
     if (menuItem.image) {
       data.append("image", menuItem.image);
     }
-    const response = await api.put(`/menuItem/update/${menuId}`, data);
+    const response = await api.put(`/api/menuItem/update/${menuId}`, data);
     return response.data;
   } catch (error) {
     console.error("Error updating menu item:", error);
@@ -89,7 +89,7 @@ export const updateMenuItemById = async (menuId, menuItem) => {
 
 export const getMenuItems = async (page, size, search) => {
   try {
-    const response = await api.get("/menuItem/getMenuItems", {
+    const response = await api.get("/api/menuItem/getMenuItems", {
       params: {
         page,
         size,
@@ -111,7 +111,7 @@ export const getMenuItem = async ({
   sortBy,
   sortDir,
 }) => {
-  const response = await api.get("/menuItem/getMenuItem", {
+  const response = await api.get("/api/menuItem/getMenuItem", {
     params: { page, size, search, foodType, sortBy, sortDir },
   });
   return response.data;

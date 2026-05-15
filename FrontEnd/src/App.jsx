@@ -105,8 +105,8 @@ const AdminOrders = () => <h3>Manage Orders</h3>;
 
 const App = () => {
   return (
-    <CartProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <CartProvider>
         <QueryClientProvider client={queryClient}>
           <Toaster position="top-center" />
 
@@ -123,8 +123,8 @@ const App = () => {
             </Route>
           </Routes>
         </QueryClientProvider>
-      </AuthProvider>
-    </CartProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 };
 

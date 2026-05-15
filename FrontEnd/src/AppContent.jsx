@@ -11,6 +11,9 @@ import { AddRestaurant } from "./pages/restaurant/AddRestaurant";
 import { AddMenu } from "./pages/menu/AddMenu";
 import { MenuList } from "./pages/menu/MenuList";
 import { Cart } from "./pages/cart/Cart";
+import { Checkout } from "./pages/checkout/CheckOut";
+import { PaymentSuccess } from "./pages/payment/PaymentSuccess";
+import { PaymentFailure } from "./pages/payment/PaymentFailure";
 
 export const AppContent = () => {
   const { showAuthModal, closeAuthModal } = useAuth();
@@ -30,6 +33,9 @@ export const AppContent = () => {
           <Route path="/add-menu" element={<AddMenu />} />
           <Route path="/explore-menu" element={<MenuList />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-failure" element={<PaymentFailure />} />
         </Routes>
       </div>
 

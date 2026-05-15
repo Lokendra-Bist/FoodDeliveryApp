@@ -12,7 +12,10 @@ export const addRestaurant = async (restaurantData) => {
     coverPhoto && formData.append("coverPhoto", coverPhoto);
     restaurantPhoto && formData.append("restaurantPhoto", restaurantPhoto);
 
-    const response = await api.post("/restaurant/registerRestaurant", formData);
+    const response = await api.post(
+      "/api/restaurant/registerRestaurant",
+      formData,
+    );
     return response;
   } catch (error) {
     console.error("Error adding restaurant:", error);
@@ -22,7 +25,7 @@ export const addRestaurant = async (restaurantData) => {
 
 export const getAllRestaurants = async () => {
   try {
-    const response = await api.get("/restaurant/getAllRestaurant");
+    const response = await api.get("/api/restaurant/getAllRestaurant");
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurants:", error);
@@ -32,7 +35,7 @@ export const getAllRestaurants = async () => {
 
 export const getRestaurantById = async (id) => {
   try {
-    const response = await api.get(`/restaurant/getRestaurantById/${id}`);
+    const response = await api.get(`/api/restaurant/getRestaurantById/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurant by ID:", error);
@@ -52,7 +55,7 @@ export const updateRestaurant = async (id, restaurantData) => {
     coverPhoto && formData.append("coverPhoto", coverPhoto);
     restaurantPhoto && formData.append("restaurantPhoto", restaurantPhoto);
 
-    const response = await api.put(`/restaurant/update/${id}`, formData);
+    const response = await api.put(`/api/restaurant/update/${id}`, formData);
     return response.data;
   } catch (error) {
     console.error("Error updating restaurant:", error);
@@ -62,7 +65,7 @@ export const updateRestaurant = async (id, restaurantData) => {
 
 export const deleteRestaurant = async (id) => {
   try {
-    const response = await api.delete(`/restaurant/deleteRestaurant/${id}`);
+    const response = await api.delete(`/api/restaurant/deleteRestaurant/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting restaurant:", error);

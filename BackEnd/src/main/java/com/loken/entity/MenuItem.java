@@ -1,4 +1,4 @@
-	package com.loken.entity;
+package com.loken.entity;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,8 @@ public class MenuItem {
     @Column(nullable = false)
     private Double price;
 
-    private Double discountPrice = 0.0;
+    @Column(nullable = false)
+    private double discountPrice = 0.0;
 
     @Lob
     private byte[] image;

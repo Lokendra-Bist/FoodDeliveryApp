@@ -2,7 +2,7 @@ import api from "./axios";
 
 export const loginUser = async (loginData) => {
   try {
-    const response = await api.post("/auth/login", loginData);
+    const response = await api.post("/api/auth/login", loginData);
     return response;
   } catch (error) {
     console.error("Failed to login", error);
@@ -12,7 +12,7 @@ export const loginUser = async (loginData) => {
 
 export const registerUser = async (registerData) => {
   try {
-    const response = await api.post("/auth/register", registerData);
+    const response = await api.post("/api/auth/register", registerData);
     return response;
   } catch (error) {
     console.error("Failed to register");

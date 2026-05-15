@@ -42,6 +42,10 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 	// Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	// Source: https://mvnrepository.com/artifact/commons-codec/commons-codec
+implementation("commons-codec:commons-codec:1.19.0")
+// Source: https://mvnrepository.com/artifact/org.json/json
+implementation("org.json:json:20251224")
 }
 
 tasks.named('test') {

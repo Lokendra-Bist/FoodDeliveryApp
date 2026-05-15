@@ -1,25 +1,9 @@
 import { Container, Table, Button } from "react-bootstrap";
 import { useCart } from "../../context/CartContext";
+import { Link } from "react-router-dom";
 
 export const Cart = () => {
-  const { cart, addToCart, removeFromCart, clearCart } = useCart();
-
-  const increaseQty = (item) => {
-    addToCart(item);
-  };
-
-  const decreaseQty = (item) => {
-    if (item.quantity === 1) {
-      removeFromCart(item.id);
-    } else {
-      addToCart({ ...item, quantity: -1 });
-    }
-  };
-
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
+  const { cart, totalAmount, addToCart, removeFromCart, clearCart } = useCart();
 
   return (
     <Container className="mt-4">
@@ -33,6 +17,7 @@ export const Cart = () => {
             <thead>
               <tr>
                 <th>Item</th>
+                <th>Restaurant Name</th>
                 <th>Image</th>
                 <th>Price</th>
                 <th>Qty</th>
@@ -43,28 +28,25 @@ export const Cart = () => {
 
             <tbody>
               {cart.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.menuItemId}>
                   <td>{item.name}</td>
+
+                  <td>{item.restaurantName}</td>
+
                   <td>
                     <img
-                      src={item.image}
+                      src={`http://localhost:2058/FoodDeliveryApp${item.imageUrl}`}
                       alt={item.name}
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                        borderRadius: "8px",
-                        border: "1px solid #ddd",
-                      }}
+                      style={{ width: "100px", height: "100px" }}
                     />
                   </td>
+
                   <td>Rs. {item.price}</td>
 
                   <td>
                     <Button
                       size="sm"
-                      variant="secondary"
-                      onClick={() => decreaseQty(item)}
+                      onClick={() => removeFromCart(item.menuItemId)}
                     >
                       -
                     </Button>
@@ -73,8 +55,12 @@ export const Cart = () => {
 
                     <Button
                       size="sm"
-                      variant="secondary"
-                      onClick={() => increaseQty(item)}
+                      onClick={() =>
+                        addToCart({
+                          id: item.menuItemId,
+                          quantity: 1,
+                        })
+                      }
                     >
                       +
                     </Button>
@@ -86,7 +72,7 @@ export const Cart = () => {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.menuItemId)}
                     >
                       Remove
                     </Button>
@@ -96,15 +82,19 @@ export const Cart = () => {
             </tbody>
           </Table>
 
-          <h5>Total: Rs. {totalPrice}</h5>
+          <h5>Total: Rs. {totalAmount}</h5>
 
           <Button variant="danger" onClick={clearCart}>
             Clear Cart
           </Button>
 
-          <Button className="ms-3" variant="success">
+          <Link
+            className="ms-3 btn btn-success"
+            variant="success"
+            to={"/checkout"}
+          >
             Checkout
-          </Button>
+          </Link>
         </>
       )}
     </Container>

@@ -1,6 +1,7 @@
 package com.loken.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,6 @@ public interface IMenuItemRepository extends JpaRepository<MenuItem, Long> {
 			""")
 	Page<MenuItem> searchAndFilter(@Param("search") String search, @Param("foodType") String foodType,
 			Pageable pageable);
+	
+	Optional<MenuItem> findById(Long id);
 }

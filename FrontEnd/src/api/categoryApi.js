@@ -2,7 +2,7 @@ import api from "./axios";
 
 export const addNewCategory = async (categoryData) => {
   try {
-    const response = await api.post("/category/saveCategory", categoryData);
+    const response = await api.post("/api/category/saveCategory", categoryData);
     return response.data;
   } catch (error) {
     console.error("Error adding category:", error);
@@ -12,7 +12,7 @@ export const addNewCategory = async (categoryData) => {
 
 export const getAllCategories = async () => {
   try {
-    const response = await api.get("/category/getAllCategory");
+    const response = await api.get("/api/category/getAllCategory");
     return response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -23,7 +23,7 @@ export const getAllCategories = async () => {
 export const getCategoryByRestaurantId = async (restaurantId) => {
   try {
     const response = await api.get(
-      `/category/categoryByRestaurant/${restaurantId}`,
+      `/api/category/categoryByRestaurant/${restaurantId}`,
     );
 
     return response.data;
@@ -38,7 +38,9 @@ export const getCategoryByRestaurantId = async (restaurantId) => {
 
 export const deleteCategory = async (categoryId) => {
   try {
-    const response = await api.delete(`/category/deleteCategory/${categoryId}`);
+    const response = await api.delete(
+      `/api/category/deleteCategory/${categoryId}`,
+    );
     return response.data;
   } catch (error) {
     console.error(`Error deleting category with ID ${categoryId}:`, error);
@@ -49,7 +51,7 @@ export const deleteCategory = async (categoryId) => {
 export const updateCategory = async (categoryId, categoryData) => {
   try {
     const response = await api.put(
-      `/category/updateCategory/${categoryId}`,
+      `/api/category/updateCategory/${categoryId}`,
       categoryData,
     );
     return response.data;
@@ -60,7 +62,7 @@ export const updateCategory = async (categoryId, categoryData) => {
 };
 
 export const getAllCategoriesByPagination = async (page, size, search) => {
-  const res = await api.get("/category/getCategories", {
+  const res = await api.get("/api/category/getCategories", {
     params: {
       page,
       size,

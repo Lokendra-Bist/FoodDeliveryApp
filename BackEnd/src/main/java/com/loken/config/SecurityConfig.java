@@ -32,9 +32,12 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
+			.cors(cors -> {})
 			.authorizeHttpRequests(auth -> auth
 											.requestMatchers("/api/auth/**").permitAll()
 											.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+											.requestMatchers("/api/order/**").authenticated()
+											.requestMatchers("/api/payment/esewa/**").permitAll()
 											.anyRequest().authenticated());
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
