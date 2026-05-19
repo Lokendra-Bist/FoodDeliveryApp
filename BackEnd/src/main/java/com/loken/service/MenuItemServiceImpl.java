@@ -8,11 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.loken.entity.Category;
+import com.loken.entity.CustomUserDetails;
 import com.loken.entity.MenuItem;
 import com.loken.entity.Restaurant;
 import com.loken.exception.InvalidDiscountPriceException;
@@ -24,6 +26,7 @@ import com.loken.repository.IMenuItemRepository;
 import com.loken.repository.IRestaurantRepository;
 import com.loken.request.MenuItemRequest;
 import com.loken.response.MenuItemResponse;
+import com.loken.security.AuthorizationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,10 +39,15 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 	private final IRestaurantRepository restaurantRepo;
 
 	private final ICategoryRepository categoryRepo;
+	
+	private final AuthorizationService authService;
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	@Transactional
-	public MenuItemResponse addMenuItem(MenuItemRequest request, MultipartFile photo) {
+	public MenuItemResponse addMenuItem(CustomUserDetails userDetails, MenuItemRequest request, MultipartFile photo) {
+		authService.checkRestaurantAccess(request.getRestaurantId(), userDetails);
+		
 		Restaurant restaurant = restaurantRepo.findById(request.getRestaurantId()).orElseThrow(
 				() -> new ResourceNotFoundException("Restaurant not with the id: " + request.getRestaurantId()));
 
@@ -106,15 +114,19 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 		return itemList.stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	@Transactional
-	public void deleteMenuItem(Long menuId) {
+	public void deleteMenuItem(CustomUserDetails userDetails, Long menuId) {
 		MenuItem item = menuItemRepo.findById(menuId)
 				.orElseThrow(() -> new ResourceNotFoundException("Menu item not found"));
-
+		
+		authService.checkRestaurantAccess(item.getRestaurant().getId(), userDetails);
+		
 		menuItemRepo.delete(item);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	@Transactional
 	public MenuItemResponse updateMenuItem(Long menuId, MenuItemRequest request, MultipartFile imageFile) {

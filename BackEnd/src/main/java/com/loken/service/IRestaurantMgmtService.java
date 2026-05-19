@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.loken.entity.CustomUserDetails;
 import com.loken.request.RestaurantRequest;
 import com.loken.response.RestaurantResponse;
 
@@ -17,7 +18,7 @@ public interface IRestaurantMgmtService {
 	
 	byte[] getImageById(Long id);
 	
-	RestaurantResponse updateRestaurant(Long id, RestaurantRequest restaurantRequest, MultipartFile restaurantPhoto, MultipartFile coverPhoto);
+	RestaurantResponse updateRestaurant(Long id, RestaurantRequest restaurantRequest, MultipartFile restaurantPhoto, MultipartFile coverPhoto, CustomUserDetails userDetails);
 	
 	void deleteRestaurant(Long id);
 	

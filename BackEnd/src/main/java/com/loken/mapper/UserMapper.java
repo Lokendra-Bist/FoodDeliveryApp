@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.loken.entity.Users;
 import com.loken.request.RegisterRequest;
 import com.loken.response.AuthResponse;
+import com.loken.response.UserResponse;
 
 public class UserMapper {
 	
@@ -24,6 +25,16 @@ public class UserMapper {
 								.map(role -> role.name())
 								.collect(Collectors.toSet());
 		return new AuthResponse(token, user.getEmail(), roles, msg);
+	}
+	
+	public static UserResponse toUsersResponse(Users user) {
+		return UserResponse.builder()
+                .id(user.getId())
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .roles(user.getRoles())
+                .build();
 	}
 
 }

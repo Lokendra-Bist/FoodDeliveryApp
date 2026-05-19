@@ -29,7 +29,7 @@ public class EsewaPaymentController {
 	
 	private final EsewaPaymentService esewaService;
 	
-	@PostMapping("/checkOut")
+	@PostMapping("/checkout")
 	public ResponseEntity<EsewaPaymentResponse> checkOut(@RequestBody CheckOutRequest request,
 												Authentication auth) {
 		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
@@ -41,7 +41,7 @@ public class EsewaPaymentController {
 	}
 	
 	@GetMapping("/verify")
-	public ResponseEntity<String> success(@RequestParam("data") String data) {
+	public ResponseEntity<String> verifyPayment(@RequestParam("data") String data) {
 		return ResponseEntity.ok(esewaService.verifyPayment(data));
 	}
 	

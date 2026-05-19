@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.loken.entity.CustomUserDetails;
 import com.loken.request.RestaurantRequest;
 import com.loken.response.RestaurantResponse;
 import com.loken.service.IRestaurantMgmtService;
@@ -31,7 +32,6 @@ public class RestaurantController {
 
 	private final IRestaurantMgmtService restaurantService;
 
-	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/registerRestaurant")
 	public ResponseEntity<RestaurantResponse> addRestaurant(@RequestPart("restaurant") RestaurantRequest request,
 			@RequestPart("coverPhoto") MultipartFile coverPhoto,
@@ -58,17 +58,17 @@ public class RestaurantController {
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
 	}
 
-	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@PutMapping("/update/{id}")
-	public ResponseEntity<RestaurantResponse> updateRestaurant(@PathVariable("id") Long id,
+	public ResponseEntity<RestaurantResponse> updateRestaurant(Authentication auth,
+			@PathVariable("id") Long id,
 			@RequestPart("restaurant") RestaurantRequest restaurantRequest,
 			@RequestPart(name = "restaurantPhoto", required = false) MultipartFile restaurantPhoto,
 			@RequestPart(name = "coverPhoto", required = false) MultipartFile coverPhoto) {
+		CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
 		return ResponseEntity
-				.ok(restaurantService.updateRestaurant(id, restaurantRequest, restaurantPhoto, coverPhoto));
+				.ok(restaurantService.updateRestaurant(id, restaurantRequest, restaurantPhoto, coverPhoto, userDetails));
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/deleteRestaurant/{id}")
 	public ResponseEntity<Void> deleteRestaurant(@PathVariable("id") Long id) {
 		restaurantService.deleteRestaurant(id);

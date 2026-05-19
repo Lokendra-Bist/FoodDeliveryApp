@@ -21,7 +21,7 @@ export const Checkout = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
-    address: "",
+    location: "",
     notes: "",
   });
 
@@ -128,8 +128,8 @@ export const Checkout = () => {
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  name="address"
-                  value={formData.address}
+                  name="location"
+                  value={formData.location}
                   onChange={handleChange}
                   placeholder="Enter full delivery address"
                   required

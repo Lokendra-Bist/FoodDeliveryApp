@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements IOrderService {
 
 	private final IUsersRepository userRepo;
 
+	@PreAuthorize("isAuthenticated()")
 	@Transactional
 	@Override
 	public OrderResponse createPendingOrder(Long userId, CheckOutRequest request) {
@@ -54,6 +56,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 		Orders order = new Orders();
 		order.setUser(user);
+		order.setRestaurant(cartItems.get(0).getMenuItem().getRestaurant());
 		order.setCreatedAt(LocalDateTime.now());
 		order.setOrderStatus(OrderStatus.PENDING);
 		order.setPaymentStatus(PaymentStatus.PENDING);

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,7 @@ public class CategoryMgmtService implements ICategoryMgmtService {
 
 	private final IMenuItemRepository menuItemRepo;
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public CategoryResponse saveCategory(CategoryRequest request, MultipartFile photo) {
 		if (categoryRepo.existsByName(request.getName())) {
@@ -64,6 +66,7 @@ public class CategoryMgmtService implements ICategoryMgmtService {
 				.collect(Collectors.toList());
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public void deleteCategory(Long id) {
 		Category category = categoryRepo.findById(id)
@@ -75,6 +78,7 @@ public class CategoryMgmtService implements ICategoryMgmtService {
 		categoryRepo.deleteById(id);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public CategoryResponse updateCategory(Long id, CategoryRequest request, MultipartFile image) {
 		Category category = categoryRepo.findById(id)

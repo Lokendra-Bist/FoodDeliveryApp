@@ -2,6 +2,7 @@ package com.loken.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class CartMgmtServiceImpl implements ICartMgmtService {
 
 	private final IUsersRepository userRepo;
 
+	@PreAuthorize("isAuthenticated()")
 	@Transactional
 	@Override
 	public CartItemResponse saveCart(CartRequest request, String email) {
@@ -60,6 +62,7 @@ public class CartMgmtServiceImpl implements ICartMgmtService {
 		return CartMapper.toCartItemResponse(updatedCart);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@Transactional
 	@Override
 	public CartItemResponse getCart(String email) {
@@ -71,6 +74,7 @@ public class CartMgmtServiceImpl implements ICartMgmtService {
         return CartMapper.toCartItemResponse(cartItems);
 	}
 
+	@PreAuthorize("#p0 == authentication.principal.id")
 	@Override
 	public void removeCart(Long userId, Long menuItemId) {
 		Cart cart = cartRepo.findByUserIdAndMenuItemId(userId, menuItemId);
@@ -79,6 +83,7 @@ public class CartMgmtServiceImpl implements ICartMgmtService {
 		}
 	}
 
+	@PreAuthorize("#p0 == authentication.principal.id")
 	@Transactional
 	@Override
 	public void clearCart(Long userId) {

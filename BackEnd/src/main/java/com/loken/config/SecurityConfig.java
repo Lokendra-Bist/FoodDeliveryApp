@@ -9,6 +9,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,14 +33,31 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
+			
 			.cors(cors -> {})
+			
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			
 			.authorizeHttpRequests(auth -> auth
-											.requestMatchers("/api/auth/**").permitAll()
-											.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-											.requestMatchers("/api/order/**").authenticated()
-											.requestMatchers("/api/payment/esewa/**").permitAll()
-											.anyRequest().authenticated());
+					
+									.requestMatchers("/api/auth/**").permitAll()
+									
+									.requestMatchers(HttpMethod.GET,
+														"/api/category/**",
+														"/api/menuItem/**",
+														"/api/restaurant/**"
+													).permitAll()
+									
+									.requestMatchers("/api/order/**").authenticated()
+																		
+									.requestMatchers("/api/admin/**").hasRole("ADMIN")
+									
+									.requestMatchers("api/admin/dashboard/**").hasRole("ADMIN")
+									
+									.anyRequest().authenticated());
+		
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+		
 		return http.build();
 	}
 

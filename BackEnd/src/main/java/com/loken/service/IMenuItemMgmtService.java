@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.loken.entity.CustomUserDetails;
 import com.loken.request.MenuItemRequest;
 import com.loken.response.MenuItemResponse;
 
 public interface IMenuItemMgmtService {
 
-	MenuItemResponse addMenuItem(MenuItemRequest request, MultipartFile photo);
+	MenuItemResponse addMenuItem(CustomUserDetails userDetails, MenuItemRequest request, MultipartFile photo);
 
 	List<MenuItemResponse> getItemByCategory(Long id);
 
@@ -22,7 +23,7 @@ public interface IMenuItemMgmtService {
 
 	List<MenuItemResponse> getMenuItemByRestaurantId(Long id);
 
-	void deleteMenuItem(Long menuId);
+	void deleteMenuItem(CustomUserDetails userDetails, Long menuId);
 
 	MenuItemResponse updateMenuItem(Long menuId, MenuItemRequest request, MultipartFile imageFile);
 

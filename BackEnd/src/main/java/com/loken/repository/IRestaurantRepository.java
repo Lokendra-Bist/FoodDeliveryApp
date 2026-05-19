@@ -6,4 +6,6 @@ import com.loken.entity.Restaurant;
 
 public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
 
+	long count();
+	
 }

@@ -54,6 +54,10 @@ public class Orders {
 	private DeliveryDetails deliveryDetails;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "restaurant_id")
+	private Restaurant restaurant;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private Users user;
 	

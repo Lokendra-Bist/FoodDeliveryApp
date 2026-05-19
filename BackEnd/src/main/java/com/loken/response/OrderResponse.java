@@ -24,6 +24,8 @@ public class OrderResponse {
 	
 	private Double totalAmount;
 	
+	private String restaurantName;
+	
 	private OrderStatus orderStatus;
 	
 	private PaymentStatus paymentStatus;

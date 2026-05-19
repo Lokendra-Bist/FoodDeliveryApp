@@ -1,7 +1,7 @@
 import api from "./axios";
 
 export const initiateEsewaPaymentAPI = async (data) => {
-  const response = await api.post("/api/payment/esewa/checkOut", data);
+  const response = await api.post("/api/payment/esewa/checkout", data);
   console.log("Response in api", response);
 
   return response;

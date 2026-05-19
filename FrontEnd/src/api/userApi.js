@@ -19,3 +19,23 @@ export const registerUser = async (registerData) => {
     throw error;
   }
 };
+
+export const fetchUser = async () => {
+  try {
+    const response = await api.get("/api/user/get_all_users");
+    return response;
+  } catch (error) {
+    console.error("Failed to fetch user");
+    throw error;
+  }
+};
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await api.delete(`/api/user/delete_user/${id}`);
+    return response;
+  } catch (error) {
+    console.error("Failed to delete user");
+    throw error;
+  }
+};

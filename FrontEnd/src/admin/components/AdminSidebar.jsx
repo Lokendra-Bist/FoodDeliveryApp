@@ -26,10 +26,6 @@ export const AdminSidebar = () => {
         <Nav.Link as={Link} to="/admin/users" className="text-white">
           Users
         </Nav.Link>
-
-        <Nav.Link as={Link} to="/admin/settings" className="text-white">
-          Settings
-        </Nav.Link>
       </Nav>
     </div>
   );

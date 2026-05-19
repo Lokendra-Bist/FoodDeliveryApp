@@ -2,6 +2,7 @@ package com.loken.service;
 
 import java.util.Base64;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class EsewaPaymentService {
 
 	private final ICartRepository cartRepo;
 
+	@PreAuthorize("isAuthenticated()")
 	public EsewaPaymentResponse initiatePayment(Long orderId) {
 
 		Orders order = orderRepo.findById(orderId)

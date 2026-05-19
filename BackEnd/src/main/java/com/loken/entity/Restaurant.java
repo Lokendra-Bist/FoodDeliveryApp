@@ -9,7 +9,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -49,6 +51,10 @@ public class Restaurant {
 	private Double latitude;
 
 	private Double longitude;
+	
+	@ManyToOne
+	@JoinColumn(name = "owner_id")
+	private Users owner;
 	
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItem> menuItems;

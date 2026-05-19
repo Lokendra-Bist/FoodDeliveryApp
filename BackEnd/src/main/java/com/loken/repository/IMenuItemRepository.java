@@ -41,4 +41,7 @@ public interface IMenuItemRepository extends JpaRepository<MenuItem, Long> {
 			Pageable pageable);
 	
 	Optional<MenuItem> findById(Long id);
+	
+	@Query("SELECT COUNT(DISTINCT m.name) FROM MenuItem m")
+	long countDistinctByName();
 }
