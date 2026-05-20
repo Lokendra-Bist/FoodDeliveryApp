@@ -16,10 +16,9 @@ import { ViewRestaurant } from "./admin/pages/ViewRestaurant";
 import { ManageCategory } from "./admin/pages/ManageCategory";
 import { ManageUsers } from "./admin/pages/ManageUsers";
 import { Dashboard } from "./admin/pages/Dashboard";
+import { Orders } from "./admin/pages/Orders";
 
 const queryClient = new QueryClient();
-
-const AdminOrders = () => <h3>Manage Orders</h3>;
 
 const App = () => {
   return (
@@ -34,7 +33,7 @@ const App = () => {
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="restaurants" element={<ManageRestaurants />} />
-              <Route path="orders" element={<AdminOrders />} />
+              <Route path="orders" element={<Orders />} />
               <Route path="restaurant/:id" element={<ViewRestaurant />} />
               <Route path="view_category" element={<ManageCategory />} />
               <Route path="users" element={<ManageUsers />} />

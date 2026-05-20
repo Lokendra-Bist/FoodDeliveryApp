@@ -18,6 +18,7 @@ public class OrderMapper {
 		return OrderResponse.builder()
 					.orderId(order.getId())
 					.totalAmount(order.getTotalAmount())
+					.deliveryDetails(order.getDeliveryDetails())
 					.restaurantName(order.getRestaurant().getName())
 					.orderStatus(order.getOrderStatus())
 					.paymentStatus(PaymentStatus.PENDING)

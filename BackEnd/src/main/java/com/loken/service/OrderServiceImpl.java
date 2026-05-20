@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,8 @@ import com.loken.repository.ICartRepository;
 import com.loken.repository.IOrderRepository;
 import com.loken.repository.IUsersRepository;
 import com.loken.request.CheckOutRequest;
+import com.loken.response.AdminOrderResponse;
+import com.loken.response.OrderItemResponse;
 import com.loken.response.OrderResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -86,6 +92,92 @@ public class OrderServiceImpl implements IOrderService {
 		
 		Orders savedOrder = orderRepo.save(order);
 		return OrderMapper.toResponse(savedOrder);
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@Transactional
+	@Override
+	public Page<AdminOrderResponse> getAllOrders(int page, int size, String search, String orderStatus,
+			String paymentStatus, String sortBy, String sortDir) {
+		Sort sort = sortDir.equalsIgnoreCase("desc") ?
+								Sort.by(sortBy).descending()
+								: Sort.by(sortBy).ascending();
+		
+		Pageable pageable = PageRequest.of(page, size, sort);
+		
+		boolean hasOrderStatus = orderStatus != null && !orderStatus.isBlank();
+		
+		boolean hasPaymentStatus = paymentStatus != null && !paymentStatus.isBlank();
+		
+		Page<Orders> orderPage;
+		if (hasOrderStatus && hasPaymentStatus) {
+		    orderPage =
+		      orderRepo.findByUser_UserNameContainingIgnoreCaseAndOrderStatusAndPaymentStatus(
+							        search,
+							        OrderStatus.valueOf(orderStatus),
+							        PaymentStatus.valueOf(paymentStatus),
+							        pageable
+							      );
+		  } else if (hasOrderStatus) {
+		    orderPage = orderRepo.findByUser_UserNameContainingIgnoreCaseAndOrderStatus(
+								      search,
+								      OrderStatus.valueOf(orderStatus),
+								      pageable
+								    );
+		  } else if (hasPaymentStatus) {
+		    orderPage =
+		      orderRepo.findByUser_UserNameContainingIgnoreCaseAndPaymentStatus(
+		    		  	search, PaymentStatus.valueOf(paymentStatus), pageable
+		    		  );
+		  } else {
+		    orderPage = orderRepo.findByUser_UserNameContainingIgnoreCase(search, pageable);
+		  }
+		return orderPage.map(order -> AdminOrderResponse.builder()
+											.orderId(order.getId())
+											.customerName(order.getDeliveryDetails().getFullName())
+											.restaurantName(order.getRestaurant().getName())
+											.phoneNumber(order.getDeliveryDetails().getPhoneNumber())
+											.location(order.getDeliveryDetails().getLocation())
+											.quantity(order.getItems().stream().mapToInt(OrderItem::getQuantity).sum())
+											.items(order.getItems().stream().map(OrderItem::getMenuItemName).toList())											.orderStatus(order.getOrderStatus().name())
+											.totalAmount(order.getTotalAmount())											
+											.paymentStatus(order.getPaymentStatus().name())
+											.build()
+							);
+		
+	}
+
+	@Transactional
+	@Override
+	public List<OrderResponse> getOrderByUserId(Long userId) {
+
+	    List<Orders> orders = orderRepo.findByUserId(userId);
+
+	    return orders.stream()
+	            .map(order -> OrderResponse.builder()
+	                    .orderId(order.getId())
+	                    .restaurantName(order.getRestaurant().getName())
+	                    .totalAmount(order.getTotalAmount())
+	                    .orderStatus(order.getOrderStatus())
+	                    .paymentStatus(order.getPaymentStatus())
+	                    .paymentReferenceId(order.getPaymentReferenceId())
+	                    .deliveryDetails(order.getDeliveryDetails())
+	                    .createdAt(order.getCreatedAt())
+	                    .items(
+	                            order.getItems().stream()
+	                                    .map(item -> OrderItemResponse.builder()
+	                                            .menuItemId(item.getMenuItem().getId())
+	                                            .menuItemName(item.getMenuItemName())
+	                                            .price(item.getPrice())
+	                                            .quantity(item.getQuantity())
+	                                            .imageUrl(item.getImageUrl())
+	                                            .build()
+	                                    	)
+	                                    .toList()
+	                    	)
+	                    .build()
+	            	)
+	            .toList();
 	}
 
 }
