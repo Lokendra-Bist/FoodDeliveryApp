@@ -10,11 +10,17 @@ import {
 
 import toast from "react-hot-toast";
 import { getOrderByUserId } from "../../api/orderApi";
+import { RestaurantRating } from "../../components/rating/RestaurantRating";
+import { submitRestaurantRating } from "../../api/restaurantRatingApi";
 
 export const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
+  const [showRatingModal, setShowRatingModal] = useState(false);
+
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -32,6 +38,38 @@ export const Orders = () => {
       toast.error("Failed to load orders");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openRatingModal = (order) => {
+    setSelectedOrder(order);
+    setShowRatingModal(true);
+  };
+
+  const handleSubmitRating = async (ratingData) => {
+    try {
+      const response = await submitRestaurantRating(ratingData);
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.orderId === response.orderId
+            ? {
+                ...order,
+                rated: response.rated,
+                rating: response.rating,
+                comment: response.comment,
+              }
+            : order,
+        ),
+      );
+
+      toast.success("Rating submitted successfully");
+
+      setShowRatingModal(false);
+
+      fetchOrders();
+    } catch (error) {
+      toast.error("Failed to submit rating");
     }
   };
 
@@ -118,6 +156,39 @@ export const Orders = () => {
                     </Badge>
                   </div>
 
+                  {order.orderStatus === "DELIVERED" && (
+                    <>
+                      {!order.rated ? (
+                        <div className="mb-3">
+                          <button
+                            className="btn btn-warning w-100 fw-semibold"
+                            onClick={() => openRatingModal(order)}
+                          >
+                            ⭐ Rate This Restaurant
+                          </button>
+                        </div>
+                      ) : (
+                        <Card className="border-success mb-3">
+                          <Card.Body>
+                            <div className="d-flex align-items-center gap-2 mb-2">
+                              <strong>Your Rating:</strong>
+
+                              <span className="text-warning fs-5">
+                                {"⭐".repeat(order.rating)}
+                              </span>
+
+                              <span>({order.rating}/5)</span>
+                            </div>
+
+                            {order.comment && (
+                              <p className="mb-0 text-muted">{order.comment}</p>
+                            )}
+                          </Card.Body>
+                        </Card>
+                      )}
+                    </>
+                  )}
+
                   <div className="mt-3">
                     <small className="text-muted fw-semibold">
                       Ordered Items
@@ -194,6 +265,15 @@ export const Orders = () => {
             </Col>
           ))}
         </Row>
+      )}
+
+      {selectedOrder && (
+        <RestaurantRating
+          show={showRatingModal}
+          handleClose={() => setShowRatingModal(false)}
+          order={selectedOrder}
+          onSubmit={handleSubmitRating}
+        />
       )}
 
       <style>

@@ -77,6 +77,14 @@ export const ManageRestaurants = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h4 className="fw-bold">Manage Restaurants</h4>
 
+        <Link
+          variant="success"
+          className="btn btn-primary "
+          to="/admin/restaurant-applications"
+        >
+          Show Applications
+        </Link>
+
         <Button
           variant="success"
           className="px-4 shadow-sm"

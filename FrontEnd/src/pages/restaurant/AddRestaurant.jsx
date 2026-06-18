@@ -8,6 +8,7 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
     name: "",
     description: "",
     address: "",
+    email: "",
     phoneNumber: "",
     latitude: "",
     longitude: "",
@@ -70,6 +71,14 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
       newErrors.name = "Restaurant name is required";
     } else if (restaurantData.name.length < 3) {
       newErrors.name = "Name must be at least 3 characters";
+    }
+
+    if (!restaurantData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(restaurantData.email)
+    ) {
+      newErrors.email = "Invalid email address";
     }
 
     if (!restaurantData.description.trim()) {
@@ -136,6 +145,7 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
       name: "",
       description: "",
       address: "",
+      email: "",
       phoneNumber: "",
       latitude: "",
       longitude: "",
@@ -184,7 +194,11 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Add New Restaurant</Modal.Title>
+        <Modal.Title>Become a Fusion Partner</Modal.Title>
+        <p className="text-muted mb-3">
+          Submit your restaurant details. Our team will review and approve your
+          registration.
+        </p>
       </Modal.Header>
 
       <Modal.Body>
@@ -231,6 +245,22 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.address}
+                </Form.Control.Feedback>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Email Address</Form.Label>
+
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={restaurantData.email}
+                  onChange={handleChange}
+                  isInvalid={!!errors.email}
+                />
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
                 </Form.Control.Feedback>
               </Form.Group>
 
@@ -312,6 +342,44 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Delivery Start Time</Form.Label>
+
+                      <Form.Control
+                        type="time"
+                        name="startTime"
+                        value={restaurantData.startTime}
+                        onChange={handleChange}
+                        isInvalid={!!errors.startTime}
+                      />
+
+                      <Form.Control.Feedback type="invalid">
+                        {errors.startTime}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+
+                  <Col>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Delivery End Time</Form.Label>
+
+                      <Form.Control
+                        type="time"
+                        name="endTime"
+                        value={restaurantData.endTime}
+                        onChange={handleChange}
+                        isInvalid={!!errors.endTime}
+                      />
+
+                      <Form.Control.Feedback type="invalid">
+                        {errors.endTime}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                </Row>
               </Row>
             </Col>
           </Row>
@@ -361,8 +429,8 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
               Cancel
             </Button>
 
-            <Button type="submit" variant="success">
-              Add Restaurant
+            <Button type="submit" variant="warning">
+              Submit Application
             </Button>
           </div>
         </Form>

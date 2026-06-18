@@ -15,6 +15,7 @@ import { Checkout } from "./pages/checkout/CheckOut";
 import { PaymentSuccess } from "./pages/payment/PaymentSuccess";
 import { PaymentFailure } from "./pages/payment/PaymentFailure";
 import { Orders } from "./pages/order/Orders";
+import { UserProfile } from "./pages/user/UserProfile";
 
 export const AppContent = () => {
   const { showAuthModal, closeAuthModal } = useAuth();
@@ -38,6 +39,7 @@ export const AppContent = () => {
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-failure" element={<PaymentFailure />} />
           <Route path="/my-orders" element={<Orders />} />
+          <Route path="/user-profile" element={<UserProfile />} />
         </Routes>
       </div>
 

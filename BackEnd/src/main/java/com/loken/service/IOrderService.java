@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.loken.entity.OrderStatus;
 import com.loken.request.CheckOutRequest;
 import com.loken.response.AdminOrderResponse;
 import com.loken.response.OrderResponse;
@@ -23,5 +24,9 @@ public interface IOrderService {
 			);
 	
 	List<OrderResponse> getOrderByUserId(Long userId);
+	
+	Page<OrderResponse> getOrderByRestaurantAndOrderStatus(Long userId, int page, int size, OrderStatus orderStatus);
 
+	OrderResponse updateOrderStatus(Long orderId, OrderStatus status);
+	
 }

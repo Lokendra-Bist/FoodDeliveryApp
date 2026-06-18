@@ -72,3 +72,63 @@ export const deleteRestaurant = async (id) => {
     throw error;
   }
 };
+
+export const getPendingRestaurants = async () => {
+  try {
+    const response = await api.get("/api/restaurant/getPendingRestaurants");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pending restaurants:", error);
+    throw error;
+  }
+};
+
+export const approveRestaurant = async (id) => {
+  try {
+    const response = await api.put(`/api/restaurant/approve/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error approving restaurant:", error);
+    throw error;
+  }
+};
+
+export const rejectRestaurant = async (id) => {
+  try {
+    const response = await api.put(`/api/restaurant/reject/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error rejecting restaurant:", error);
+    throw error;
+  }
+};
+
+export const getRestaurantByOwner = async () => {
+  try {
+    const response = await api.get("/api/restaurant/getRestaurantByOwner");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching restaurant by owner:", error);
+    throw error;
+  }
+};
+
+export const getRestaurantDashboard = async () => {
+  try {
+    const response = await api.get("/api/restaurant/dashboard");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching restaurant dashboard:", error);
+    throw error;
+  }
+};
+
+export const getTopRatedRestaurants = async () => {
+  try {
+    const response = await api.get("/api/ratings/top-rating");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching top-rated restaurants:", error);
+    throw error;
+  }
+};

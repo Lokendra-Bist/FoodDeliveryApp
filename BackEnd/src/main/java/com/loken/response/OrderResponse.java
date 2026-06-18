@@ -36,6 +36,12 @@ public class OrderResponse {
 	
 	private LocalDateTime createdAt;
 	
+	private Boolean rated;
+
+    private Integer rating;
+
+    private String comment;
+	
 	private List<OrderItemResponse> items;
 
 }

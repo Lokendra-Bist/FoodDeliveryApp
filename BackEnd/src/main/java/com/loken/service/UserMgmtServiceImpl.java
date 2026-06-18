@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.loken.entity.Role;
+import com.loken.entity.Users;
 import com.loken.mapper.UserMapper;
 import com.loken.repository.IUsersRepository;
 import com.loken.response.UserResponse;
@@ -30,6 +31,12 @@ public class UserMgmtServiceImpl implements IUserMgmtService {
 	@Override
 	public void deleteUser(Long userId) {
 		usersRepo.deleteById(userId);
+	}
+	
+	@Override
+	public UserResponse getUserByUserId(Long id) {
+		Users user = usersRepo.findById(id).get();
+		return UserMapper.toUsersResponse(user);
 	}
 
 }

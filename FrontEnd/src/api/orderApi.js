@@ -33,3 +33,31 @@ export const getOrderByUserId = async () => {
     throw error;
   }
 };
+
+export const getOrdersByRestaurant = async (page, size, status) => {
+  try {
+    const response = await api.get("/api/order/getOrderByRestaurant", {
+      params: {
+        page,
+        size,
+        status,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching orders by restaurant:", error);
+    throw error;
+  }
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const response = await api.put(`/api/order/updateStatus/${orderId}`, {
+      status,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    throw error;
+  }
+};

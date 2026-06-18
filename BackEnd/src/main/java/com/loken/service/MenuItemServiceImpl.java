@@ -174,14 +174,14 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 
 	@Override
 	@Transactional
-	public Page<MenuItemResponse> getMenuItem(int page, int size, String search, String foodType, String sortBy,
+	public Page<MenuItemResponse> getMenuItem(int page, int size, Integer categoryId, String search, String foodType, String sortBy,
 			String sortDir) {
 
 		Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
 
 		Pageable pageable = PageRequest.of(page, size, sort);
 
-		Page<MenuItem> menuItemPage = menuItemRepo.searchAndFilter(search, foodType, pageable);
+		Page<MenuItem> menuItemPage = menuItemRepo.searchAndFilter(search, foodType, categoryId, pageable);
 
 		return menuItemPage.map(MenuItemMapper::toResponse);
 	}

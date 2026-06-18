@@ -32,6 +32,7 @@ public interface IMenuItemMgmtService {
 	Page<MenuItemResponse> getMenuItem(
             int page,
             int size,
+            Integer categoryId,
             String search,
             String foodType,
             String sortBy,

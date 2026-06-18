@@ -67,5 +67,5 @@ public class AuthServiceImpl implements IAuthService {
 		String token = jwtUtil.generateToken(request.getEmail());
 		return UserMapper.toResponse(user, token, "Registered Successfully!");
 	}
-
+	
 }

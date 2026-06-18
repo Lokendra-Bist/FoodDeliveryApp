@@ -11,6 +11,8 @@ public class RestaurantResponse {
 
 	private String name;
 
+	private String email;
+	
 	private String coverPhoto;
 
 	private String restaurantPhoto;
@@ -32,5 +34,7 @@ public class RestaurantResponse {
 	private Double latitude;
 	
     private Double longitude;
+    
+    private String status;
 
 }

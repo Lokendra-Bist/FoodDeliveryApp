@@ -3,6 +3,7 @@ package com.loken.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,12 +19,16 @@ import com.loken.entity.OrderItem;
 import com.loken.entity.OrderStatus;
 import com.loken.entity.Orders;
 import com.loken.entity.PaymentStatus;
+import com.loken.entity.Restaurant;
+import com.loken.entity.RestaurantRating;
 import com.loken.entity.Users;
 import com.loken.exception.BadRequestException;
 import com.loken.exception.ResourceNotFoundException;
 import com.loken.mapper.OrderMapper;
 import com.loken.repository.ICartRepository;
 import com.loken.repository.IOrderRepository;
+import com.loken.repository.IRestaurantRatingRepository;
+import com.loken.repository.IRestaurantRepository;
 import com.loken.repository.IUsersRepository;
 import com.loken.request.CheckOutRequest;
 import com.loken.response.AdminOrderResponse;
@@ -41,7 +46,11 @@ public class OrderServiceImpl implements IOrderService {
 	private final ICartRepository cartRepo;
 
 	private final IUsersRepository userRepo;
-
+	
+	private final IRestaurantRepository restRepo;
+	
+	private final IRestaurantRatingRepository ratingRepo;
+	
 	@PreAuthorize("isAuthenticated()")
 	@Transactional
 	@Override
@@ -154,30 +163,92 @@ public class OrderServiceImpl implements IOrderService {
 	    List<Orders> orders = orderRepo.findByUserId(userId);
 
 	    return orders.stream()
-	            .map(order -> OrderResponse.builder()
-	                    .orderId(order.getId())
-	                    .restaurantName(order.getRestaurant().getName())
-	                    .totalAmount(order.getTotalAmount())
-	                    .orderStatus(order.getOrderStatus())
-	                    .paymentStatus(order.getPaymentStatus())
-	                    .paymentReferenceId(order.getPaymentReferenceId())
-	                    .deliveryDetails(order.getDeliveryDetails())
-	                    .createdAt(order.getCreatedAt())
-	                    .items(
-	                            order.getItems().stream()
-	                                    .map(item -> OrderItemResponse.builder()
-	                                            .menuItemId(item.getMenuItem().getId())
-	                                            .menuItemName(item.getMenuItemName())
-	                                            .price(item.getPrice())
-	                                            .quantity(item.getQuantity())
-	                                            .imageUrl(item.getImageUrl())
-	                                            .build()
-	                                    	)
-	                                    .toList()
-	                    	)
-	                    .build()
-	            	)
+	            .map(order -> {
+
+	                Optional<RestaurantRating> rating =
+	                        ratingRepo.findByOrderId(order.getId());
+
+	                return OrderResponse.builder()
+	                        .orderId(order.getId())
+	                        .restaurantName(order.getRestaurant().getName())
+	                        .totalAmount(order.getTotalAmount())
+	                        .orderStatus(order.getOrderStatus())
+	                        .paymentStatus(order.getPaymentStatus())
+	                        .paymentReferenceId(order.getPaymentReferenceId())
+	                        .deliveryDetails(order.getDeliveryDetails())
+	                        .createdAt(order.getCreatedAt())
+
+	                        .rated(rating.isPresent())
+	                        .rating(
+	                            rating.map(RestaurantRating::getRating)
+	                                  .orElse(null)
+	                        )
+	                        .comment(
+	                            rating.map(RestaurantRating::getComment)
+	                                  .orElse(null)
+	                        )
+
+	                        .items(
+	                                order.getItems().stream()
+	                                        .map(item -> OrderItemResponse.builder()
+	                                                .menuItemId(item.getMenuItem().getId())
+	                                                .menuItemName(item.getMenuItemName())
+	                                                .price(item.getPrice())
+	                                                .quantity(item.getQuantity())
+	                                                .imageUrl(item.getImageUrl())
+	                                                .build()
+	                                        )
+	                                        .toList()
+	                        )
+	                        .build();
+	            })
 	            .toList();
+	}
+	
+	@Transactional
+	@Override
+	public Page<OrderResponse> getOrderByRestaurantAndOrderStatus(Long userId, int page, 
+							int size, OrderStatus orderStatus) {
+		
+		Restaurant restaurant = restRepo.findByOwnerId(userId).get();
+		String restaurantEmail = restaurant.getEmail();
+		
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		
+		Page<Orders> orders = orderRepo.findByRestaurantEmailAndOrderStatus(restaurantEmail, orderStatus, pageable);
+		
+		return orders.map(order -> OrderResponse.builder()
+										.orderId(order.getId())
+										.orderStatus(order.getOrderStatus())
+										.totalAmount(order.getTotalAmount())
+										.restaurantName(order.getRestaurant().getName())
+										.paymentStatus(order.getPaymentStatus())
+										.paymentReferenceId(order.getPaymentReferenceId())
+										.deliveryDetails(order.getDeliveryDetails())
+										.createdAt(order.getCreatedAt())
+										.items(order.getItems()
+													.stream()
+													.map(item -> OrderItemResponse.builder()
+																	.menuItemId(item.getId())
+																	.menuItemName(item.getMenuItemName())
+																	.price(item.getPrice())
+																	.quantity(item.getQuantity())
+																	.imageUrl(item.getImageUrl())
+																	.build()
+														).toList()
+												)
+										.build()
+							);
+	}
+
+	@Transactional
+	@Override
+	public OrderResponse updateOrderStatus(Long orderId, OrderStatus status) {
+		Orders order = orderRepo.findById(orderId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+		order.setOrderStatus(status);
+		Orders savedOrder = orderRepo.save(order);
+		return OrderMapper.toResponse(savedOrder);
 	}
 
 }

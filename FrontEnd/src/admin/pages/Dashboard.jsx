@@ -96,8 +96,6 @@ export const Dashboard = () => {
         </p>
       </div>
 
-      {/* Stats Cards */}
-
       <Row className="g-4 mb-5">
         {cards.map((card, index) => (
           <Col key={index} xl={3} lg={4} md={6}>
@@ -134,8 +132,6 @@ export const Dashboard = () => {
           </Col>
         ))}
       </Row>
-
-      {/* Recent Orders Table */}
 
       <Row className="mb-5">
         <Col lg={8}>
@@ -207,8 +203,6 @@ export const Dashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-
-        {/* Quick Actions */}
 
         <Col lg={4}>
           <Card className="border-0 shadow-sm">

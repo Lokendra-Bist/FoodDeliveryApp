@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.loken.entity.CustomUserDetails;
+import com.loken.entity.RestaurantStatus;
 import com.loken.request.RestaurantRequest;
+import com.loken.response.RestaurantDashboardResponse;
 import com.loken.response.RestaurantResponse;
 import com.loken.service.IRestaurantMgmtService;
 
@@ -35,15 +37,18 @@ public class RestaurantController {
 	@PostMapping("/registerRestaurant")
 	public ResponseEntity<RestaurantResponse> addRestaurant(@RequestPart("restaurant") RestaurantRequest request,
 			@RequestPart("coverPhoto") MultipartFile coverPhoto,
-			@RequestPart("restaurantPhoto") MultipartFile restaurantPhoto) {
-
-		return new ResponseEntity<>(restaurantService.addRestaurant(request, coverPhoto, restaurantPhoto),
+			@RequestPart("restaurantPhoto") MultipartFile restaurantPhoto,
+			Authentication auth) {
+		
+		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
+		Long userId = details.getId();
+		return new ResponseEntity<>(restaurantService.addRestaurant(request, coverPhoto, restaurantPhoto, userId),
 				HttpStatus.OK);
 	}
 
 	@GetMapping("/getAllRestaurant")
 	public ResponseEntity<List<RestaurantResponse>> getAllRestaurants() {
-		return new ResponseEntity<>(restaurantService.getAllRestaurants(), HttpStatus.OK);
+		return new ResponseEntity<>(restaurantService.getAllRestaurantsByStatus(), HttpStatus.OK);
 	}
 
 	@GetMapping("/getRestaurantById/{id}")
@@ -74,5 +79,36 @@ public class RestaurantController {
 		restaurantService.deleteRestaurant(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@GetMapping("/getPendingRestaurants")
+	public ResponseEntity<List<RestaurantResponse>> getPendingRestaurants() {
+		return ResponseEntity.ok(restaurantService.getPendingApplication());
+	}
+	
+	@PutMapping("/approve/{id}")
+	public ResponseEntity<?> approve(@PathVariable("id") Long id) {
+	    restaurantService.updateStatus(id, RestaurantStatus.APPROVED);
+	    return ResponseEntity.ok("Restaurant approved successfully");
+	}
 
+	@PutMapping("/reject/{id}")
+	public ResponseEntity<?> reject(@PathVariable("id") Long id) {
+	    restaurantService.updateStatus(id, RestaurantStatus.REJECTED);
+	    return ResponseEntity.ok("Restaurant rejected successfully");
+	}
+	
+	@GetMapping("/getRestaurantByOwner")
+	public ResponseEntity<RestaurantResponse> getRestaurantByOwner(Authentication auth) {
+		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
+		Long userId = details.getId();
+		return ResponseEntity.ok(restaurantService.getRestaurantByOwnerId(userId));
+	}
+	
+	@GetMapping("/dashboard")
+	public ResponseEntity<RestaurantDashboardResponse> getDashboard(Authentication auth) {
+		CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
+		Long userId = details.getId();
+		return ResponseEntity.ok(restaurantService.getDashboard(userId));
+	}
+	
 }

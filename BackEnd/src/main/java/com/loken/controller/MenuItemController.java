@@ -100,12 +100,13 @@ public class MenuItemController {
     public Page<MenuItemResponse> getMenuItems(
             @RequestParam(name = "page") int page,
             @RequestParam(name = "size") int size,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "search" ,required = false) String search,
             @RequestParam(name = "foodType", required = false) String foodType,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir
     ) {
-        return menuItemService.getMenuItem(page, size, search, foodType, sortBy, sortDir);
+        return menuItemService.getMenuItem(page, size, categoryId, search, foodType, sortBy, sortDir);
     }
 	
 }

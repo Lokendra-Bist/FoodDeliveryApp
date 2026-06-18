@@ -9,5 +9,7 @@ public interface IUserMgmtService {
 	List<UserResponse> getAllUsers();
 	
 	void deleteUser(Long userId);
+	
+	UserResponse getUserByUserId(Long id);
 
 }

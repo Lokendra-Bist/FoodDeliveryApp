@@ -1,5 +1,7 @@
 package com.loken.response;
 
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,5 +18,9 @@ public class RecentOrderResponse {
 	private Double totalAmount;
 	
 	private String orderStatus;
+	
+	private String paymentStatus;
+	
+	private LocalDateTime createdAt;
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +36,8 @@ public class Restaurant {
 	private byte[] restaurantPhoto;
 
 	private String address;
+	
+	private String email;
 
 	@Pattern(regexp = "^(\\+977)?9[678]\\d{8}$", message = "Invalid phone number")
 	private String phoneNumber;
@@ -52,11 +56,17 @@ public class Restaurant {
 
 	private Double longitude;
 	
+	@Enumerated(EnumType.STRING)
+	private RestaurantStatus status;
+	
 	@ManyToOne
 	@JoinColumn(name = "owner_id")
 	private Users owner;
 	
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItem> menuItems;
+	
+	@OneToMany(mappedBy = "restaurant")
+	private List<RestaurantRating> ratings;
 
 }

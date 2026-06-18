@@ -5,8 +5,11 @@ import { getAllCategories } from "../../api/categoryApi";
 import { addMenuItem } from "../../api/menuApi";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
+  const { roles } = useAuth();
+
   const [menuItem, setMenuItem] = useState({
     name: "",
     description: "",
@@ -159,22 +162,26 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Restaurant</Form.Label>
-                <Form.Select
-                  name="restaurantId"
-                  value={menuItem.restaurantId}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Restaurant</option>
-                  {restaurants.map((res) => (
-                    <option key={res.id} value={res.id}>
-                      {res.name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+              {roles.includes("ADMIN") && (
+                <Form.Group className="mb-3">
+                  <Form.Label>Restaurant</Form.Label>
+
+                  <Form.Select
+                    name="restaurantId"
+                    value={menuItem.restaurantId}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Restaurant</option>
+
+                    {restaurants.map((restaurant) => (
+                      <option key={restaurant.id} value={restaurant.id}>
+                        {restaurant.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              )}
 
               <Form.Group className="mb-3">
                 <Form.Label>Category</Form.Label>

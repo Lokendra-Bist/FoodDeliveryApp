@@ -34,14 +34,19 @@ public interface IMenuItemRepository extends JpaRepository<MenuItem, Long> {
 	@Query("""
 			    SELECT m FROM MenuItem m
 			    WHERE
-			        (:search IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :search, '%')))
+			        (:search IS NULL OR :search = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :search, '%')))
 			        AND (:foodType IS NULL OR :foodType = 'ALL' OR LOWER(m.foodType) = LOWER(:foodType))
+			        AND (:categoryId IS NULL OR m.category.id = :categoryId)
 			""")
 	Page<MenuItem> searchAndFilter(@Param("search") String search, @Param("foodType") String foodType,
-			Pageable pageable);
+			@Param("categoryId") Integer categoryId, Pageable pageable);
 	
 	Optional<MenuItem> findById(Long id);
 	
 	@Query("SELECT COUNT(DISTINCT m.name) FROM MenuItem m")
 	long countDistinctByName();
+	
+	Long countByRestaurantId(Long restaurantId);
+	
+	Page<MenuItem> findByCategoryId(int categoryId, Pageable pageable);
 }

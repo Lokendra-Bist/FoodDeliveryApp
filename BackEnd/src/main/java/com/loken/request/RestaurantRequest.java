@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -21,6 +22,9 @@ public class RestaurantRequest {
 	
 	@NotBlank(message = "Address is required")
 	private String address;
+	
+	@Email(message = "Email is required")
+	private String email;
 	
 	@NotBlank(message = "PhoneNumber is required")
 	private String phoneNumber;
@@ -46,5 +50,5 @@ public class RestaurantRequest {
 
     @NotNull(message = "Longitude is required")
     private Double longitude;
-
+    
 }

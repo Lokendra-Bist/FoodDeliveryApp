@@ -4,36 +4,36 @@ import {
   IoCartOutline,
   IoRestaurantOutline,
   IoHomeOutline,
-  IoReceiptOutline,
-  IoLogOutOutline,
 } from "react-icons/io5";
 
-import { MdOutlineExplore } from "react-icons/md";
+import { MdManageAccounts, MdOutlineExplore } from "react-icons/md";
 
-import { FiPhoneCall, FiLogIn } from "react-icons/fi";
+import { FiLogIn, FiPhoneCall } from "react-icons/fi";
 
 import foodfusion from "../../assets/foodfusion.webp";
 
 import { useAuth } from "../../context/AuthContext";
 
-import { AuthModal } from "../../pages/auth/AuthModel";
-
-import { useState } from "react";
-
 import { useCart } from "../../context/CartContext";
+import { NavDropdown } from "react-bootstrap";
+import { useState } from "react";
+import { AuthModal } from "../../pages/auth/AuthModel";
+import { UserProfile } from "../../pages/user/UserProfile";
+import { AddRestaurant } from "../../pages/restaurant/AddRestaurant";
 
 const Navbar = () => {
-  const { token, logout } = useAuth();
-
-  const navigate = useNavigate();
+  const { token, logout, roles } = useAuth();
 
   const [showAuth, setShowAuth] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showAddRestaurant, setShowAddRestaurant] = useState(false);
+
+  const navigate = useNavigate();
 
   const { cart } = useCart();
 
   const handleLogout = () => {
     logout();
-
     navigate("/");
   };
 
@@ -99,15 +99,6 @@ const Navbar = () => {
                 </NavLink>
               </li>
 
-              {token && (
-                <li className="nav-item">
-                  <NavLink to="/my-orders" className={navLinkClass}>
-                    <IoReceiptOutline size={18} />
-                    Orders
-                  </NavLink>
-                </li>
-              )}
-
               <li className="nav-item">
                 <a
                   href="#footer"
@@ -119,7 +110,7 @@ const Navbar = () => {
               </li>
             </ul>
 
-            <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+            <div className="d-flex align-items-center gap-4 mt-3 mt-lg-0">
               <NavLink to="/cart" className="position-relative text-dark">
                 <IoCartOutline size={28} />
 
@@ -143,34 +134,72 @@ const Navbar = () => {
               </NavLink>
 
               {token ? (
-                <button
-                  className="
-                    btn
-                    btn-dark
-                    rounded-pill
-                    px-4
-                    d-flex
-                    align-items-center
-                    gap-2
-                  "
-                  onClick={handleLogout}
+                <NavDropdown
+                  align="end"
+                  title={
+                    <span className="text-dark">
+                      <MdManageAccounts size={30} />
+                    </span>
+                  }
+                  id="account-dropdown"
                 >
-                  <IoLogOutOutline size={18} />
-                  Logout
-                </button>
+                  <NavDropdown.Item onClick={() => setShowProfile(true)}>
+                    My Profile
+                  </NavDropdown.Item>
+
+                  {roles.includes("USER") &&
+                    !roles.includes("RESTAURANT_OWNER") && (
+                      <>
+                        <NavDropdown.Item as={NavLink} to="/my-orders">
+                          My Orders
+                        </NavDropdown.Item>
+
+                        <NavDropdown.Item
+                          onClick={() => setShowAddRestaurant(true)}
+                        >
+                          Become a Partner
+                        </NavDropdown.Item>
+                      </>
+                    )}
+
+                  {roles.includes("RESTAURANT_OWNER") && (
+                    <>
+                      <NavDropdown.Item as={NavLink} to="/restaurant/dashboard">
+                        Go to Restaurant Panel
+                      </NavDropdown.Item>
+                    </>
+                  )}
+
+                  {roles.includes("ADMIN") && (
+                    <>
+                      <NavDropdown.Item as={NavLink} to="/admin/dashboard">
+                        Admin Panel
+                      </NavDropdown.Item>
+                    </>
+                  )}
+
+                  <NavDropdown.Divider />
+
+                  <NavDropdown.Item
+                    onClick={handleLogout}
+                    className="text-danger"
+                  >
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
               ) : (
                 <button
                   className="
-                    btn
-                    btn-warning
-                    rounded-pill
-                    px-4
-                    d-flex
-                    align-items-center
-                    gap-2
-                    text-dark
-                    fw-semibold
-                  "
+                        btn
+                        btn-warning
+                        rounded-pill
+                        px-4
+                        d-flex
+                        align-items-center
+                        gap-2
+                        text-dark
+                        fw-semibold
+                      "
                   onClick={() => setShowAuth(true)}
                 >
                   <FiLogIn size={18} />
@@ -178,11 +207,21 @@ const Navbar = () => {
                 </button>
               )}
             </div>
+
+            <AddRestaurant
+              show={showAddRestaurant}
+              onHide={() => setShowAddRestaurant(false)}
+            />
+
+            <UserProfile
+              show={showProfile}
+              handleClose={() => setShowProfile(false)}
+            />
+
+            <AuthModal show={showAuth} handleClose={() => setShowAuth(false)} />
           </div>
         </div>
       </nav>
-
-      <AuthModal show={showAuth} handleClose={() => setShowAuth(false)} />
     </>
   );
 };

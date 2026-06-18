@@ -39,7 +39,7 @@ export const PaymentSuccess = () => {
           cancelButtonText: "OK",
         }).then((result) => {
           if (result.isConfirmed) {
-            navigate("/orders");
+            navigate("/my-orders");
           } else {
             navigate("/");
           }

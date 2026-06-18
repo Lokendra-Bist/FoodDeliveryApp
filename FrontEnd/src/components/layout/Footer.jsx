@@ -7,7 +7,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-dark text-light mt-5 pt-5">
+    <footer id="footer" className="bg-dark text-light mt-5 pt-5">
       <div className="container">
         <div className="row gy-4">
           <div className="col-md-6 col-lg-4">
