@@ -13,9 +13,32 @@ export const SignIn = ({ onSwitch, onClose }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
 
     try {
       const res = await loginUser({ email, password });
@@ -57,28 +80,54 @@ export const SignIn = ({ onSwitch, onClose }) => {
       </p>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-floating mb-3">
+        <div className="form-floating mb-1">
           <input
             type="email"
-            className="form-control rounded-3"
+            className={`form-control rounded-3 ${
+              errors.email ? "is-invalid" : ""
+            }`}
             id="email"
             placeholder="name@example.com"
-            required
-            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+
+              if (errors.email) {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: "",
+                }));
+              }
+            }}
           />
 
           <label htmlFor="email">Email address</label>
         </div>
 
-        <div className="mb-3 position-relative">
+        {errors.email && (
+          <div className="invalid-feedback d-block mb-3">{errors.email}</div>
+        )}
+
+        <div className="mb-1 position-relative">
           <div className="form-floating">
             <input
               type={showPassword ? "text" : "password"}
-              className="form-control rounded-3 pe-5"
+              className={`form-control rounded-3 pe-5 ${
+                errors.password ? "is-invalid" : ""
+              }`}
               id="password"
               placeholder="Password"
-              required
-              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+
+                if (errors.password) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    password: "",
+                  }));
+                }
+              }}
             />
 
             <label htmlFor="password">Password</label>
@@ -98,6 +147,10 @@ export const SignIn = ({ onSwitch, onClose }) => {
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </span>
         </div>
+
+        {errors.password && (
+          <div className="invalid-feedback d-block mb-3">{errors.password}</div>
+        )}
 
         <button className="btn btn-warning w-100 rounded-pill fw-semibold">
           Login

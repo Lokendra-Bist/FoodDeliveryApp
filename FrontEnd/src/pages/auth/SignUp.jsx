@@ -15,15 +15,65 @@ export const SignUp = ({ onSwitch, onClose }) => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.userName.trim()) {
+      newErrors.userName = "Full name is required";
+    } else if (form.userName.trim().length < 3) {
+      newErrors.userName = "Name must be at least 3 characters";
+    }
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(form.email)) {
+      newErrors.email = "Enter a valid email";
+    }
+
+    if (!form.phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^9\d{9}$/.test(form.phoneNumber)) {
+      newErrors.phoneNumber = "Enter valid Nepal phone number";
+    }
+
+    if (!form.password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(form.password)) {
+      newErrors.password =
+        "Password must contain uppercase, lowercase and number";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
 
     try {
       const response = await registerUser(form);
@@ -62,50 +112,76 @@ export const SignUp = ({ onSwitch, onClose }) => {
       </p>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-floating mb-3">
+        <div className="form-floating mb-1">
           <input
             name="userName"
-            className="form-control rounded-3"
+            value={form.userName}
+            className={`form-control rounded-3 ${
+              errors.userName ? "is-invalid" : ""
+            }`}
             placeholder="Name"
-            required
             onChange={handleChange}
           />
+
           <label>Full Name</label>
         </div>
 
-        <div className="form-floating mb-3">
+        {errors.userName && (
+          <div className="invalid-feedback d-block mb-3">{errors.userName}</div>
+        )}
+
+        <div className="form-floating mb-1">
           <input
             type="email"
             name="email"
-            className="form-control rounded-3"
+            value={form.email}
+            className={`form-control rounded-3 ${
+              errors.email ? "is-invalid" : ""
+            }`}
             placeholder="Email"
-            required
             onChange={handleChange}
           />
+
           <label>Email</label>
         </div>
 
-        <div className="form-floating mb-3">
+        {errors.email && (
+          <div className="invalid-feedback d-block mb-3">{errors.email}</div>
+        )}
+
+        <div className="form-floating mb-1">
           <input
             name="phoneNumber"
-            className="form-control rounded-3"
+            value={form.phoneNumber}
+            className={`form-control rounded-3 ${
+              errors.phoneNumber ? "is-invalid" : ""
+            }`}
             placeholder="Phone"
-            required
             onChange={handleChange}
           />
+
           <label>Phone Number</label>
         </div>
 
-        <div className="mb-3 position-relative">
+        {errors.phoneNumber && (
+          <div className="invalid-feedback d-block mb-3">
+            {errors.phoneNumber}
+          </div>
+        )}
+
+        <div className="mb-1 position-relative">
           <div className="form-floating">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              className="form-control rounded-3 pe-5"
+              value={form.password}
+              className={`form-control rounded-3 pe-5 ${
+                errors.password ? "is-invalid" : ""
+              }`}
               placeholder="Password"
-              required
               onChange={handleChange}
             />
+
             <label>Password</label>
           </div>
 
@@ -124,16 +200,20 @@ export const SignUp = ({ onSwitch, onClose }) => {
           </span>
         </div>
 
+        {errors.password && (
+          <div className="invalid-feedback d-block mb-3">{errors.password}</div>
+        )}
+
         <button className="btn btn-warning w-100 rounded-pill fw-semibold">
           Create Account
         </button>
       </form>
 
-      {/* <div className="text-center my-3 text-muted">or</div>
+      <div className="text-center my-3 text-muted">or</div>
 
       <button className="btn btn-outline-dark w-100 rounded-pill">
         Continue with Google
-      </button> */}
+      </button>
 
       <p className="text-center mt-4 mb-0">
         Already have an account?{" "}

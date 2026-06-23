@@ -12,6 +12,7 @@ export const EditMenuItem = ({
   const [item, setItem] = useState({});
   const [preview, setPreview] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (menuItem) {
@@ -43,6 +44,11 @@ export const EditMenuItem = ({
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
   const handleImageChange = (e) => {
@@ -55,10 +61,75 @@ export const EditMenuItem = ({
         image: file,
       }));
     }
+    setErrors((prev) => ({
+      ...prev,
+      image: "",
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!item.name?.trim()) {
+      newErrors.name = "Item name is required";
+    } else if (item.name.trim().length < 3) {
+      newErrors.name = "Item name must be at least 3 characters";
+    }
+
+    if (!item.price || Number(item.price) <= 0) {
+      newErrors.price = "Price must be greater than 0";
+    }
+
+    if (item.discountPrice && Number(item.discountPrice) < 0) {
+      newErrors.discountPrice = "Discount price cannot be negative";
+    }
+
+    if (item.discountPrice && Number(item.discountPrice) > Number(item.price)) {
+      newErrors.discountPrice = "Discount price cannot exceed actual price";
+    }
+
+    if (!item.categoryId) {
+      newErrors.categoryId = "Please select a category";
+    }
+
+    if (!item.foodType) {
+      newErrors.foodType = "Please select a food type";
+    }
+
+    if (!item.description?.trim()) {
+      newErrors.description = "Description is required";
+    } else if (item.description.trim().length < 10) {
+      newErrors.description = "Description must be at least 10 characters";
+    }
+
+    if (item.image instanceof File) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(item.image.type)) {
+        newErrors.image = "Only JPG, JPEG, PNG and WEBP images are allowed";
+      }
+
+      if (item.image.size > 2 * 1024 * 1024) {
+        newErrors.image = "Image size cannot exceed 2MB";
+      }
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     onSave(item.id, item);
   };
@@ -80,7 +151,11 @@ export const EditMenuItem = ({
               name="name"
               value={item.name || ""}
               onChange={handleChange}
+              isInvalid={!!errors.name}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.name}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -90,7 +165,11 @@ export const EditMenuItem = ({
               name="price"
               value={item.price || ""}
               onChange={handleChange}
+              isInvalid={!!errors.price}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.price}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -100,7 +179,11 @@ export const EditMenuItem = ({
               name="discountPrice"
               value={item.discountPrice || ""}
               onChange={handleChange}
+              isInvalid={!!errors.discountPrice}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.discountPrice}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -109,6 +192,7 @@ export const EditMenuItem = ({
               name="categoryId"
               value={item.categoryId || ""}
               onChange={handleChange}
+              isInvalid={!!errors.categoryId}
             >
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -117,6 +201,9 @@ export const EditMenuItem = ({
                 </option>
               ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors.categoryId}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -125,6 +212,7 @@ export const EditMenuItem = ({
               name="foodType"
               value={item.foodType || ""}
               onChange={handleChange}
+              isInvalid={!!errors.foodType}
             >
               <option value="">Select Food Type</option>
               <option value="VEG">VEG</option>
@@ -132,6 +220,9 @@ export const EditMenuItem = ({
               <option value="EGG">EGG</option>
               <option value="VEGAN">VEGAN</option>
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors.foodType}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -142,7 +233,11 @@ export const EditMenuItem = ({
               rows={3}
               value={item.description || ""}
               onChange={handleChange}
+              isInvalid={!!errors.description}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.description}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -151,7 +246,11 @@ export const EditMenuItem = ({
               type="file"
               accept="image/*"
               onChange={handleImageChange}
+              isInvalid={!!errors.image}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.image}
+            </Form.Control.Feedback>
           </Form.Group>
 
           {preview && (

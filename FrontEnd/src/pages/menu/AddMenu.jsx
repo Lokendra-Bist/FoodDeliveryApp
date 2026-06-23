@@ -25,6 +25,7 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
 
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,29 +40,60 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
+    const newErrors = {};
 
     if (!menuItem.name.trim()) {
-      alert("Item name is required");
-      return;
+      newErrors.name = "Item name is required";
+    } else if (menuItem.name.trim().length < 3) {
+      newErrors.name = "Item name must be at least 3 characters";
     }
 
-    const price = Number(menuItem.price);
-    const discountPrice = Number(menuItem.discountPrice);
-
-    if (price <= 0) {
-      alert("Price must be greater than 0");
-      return;
+    if (!menuItem.description.trim()) {
+      newErrors.description = "Description is required";
+    } else if (menuItem.description.trim().length < 10) {
+      newErrors.description = "Description must contain at least 10 characters";
     }
 
-    if (menuItem.discountPrice && discountPrice >= price) {
-      alert("Discount price must be less than price");
-      return;
+    if (!menuItem.price) {
+      newErrors.price = "Price is required";
+    } else if (Number(menuItem.price) <= 0) {
+      newErrors.price = "Price must be greater than 0";
+    }
+
+    if (
+      menuItem.discountPrice &&
+      Number(menuItem.discountPrice) >= Number(menuItem.price)
+    ) {
+      newErrors.discountPrice =
+        "Discount price must be less than original price";
+    }
+
+    if (roles.includes("ADMIN") && !menuItem.restaurantId) {
+      newErrors.restaurantId = "Please select a restaurant";
+    }
+
+    if (!menuItem.categoryId) {
+      newErrors.categoryId = "Please select a category";
+    }
+
+    if (!menuItem.foodType) {
+      newErrors.foodType = "Please select food type";
     }
 
     if (!menuItem.image) {
-      alert("Image is required");
+      newErrors.image = "Please upload an image";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
       return;
     }
 
@@ -80,6 +112,8 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
         restaurantId: restaurantId || "",
         foodType: "",
       });
+
+      setErrors({});
       setPreview(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
@@ -121,8 +155,11 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   name="name"
                   value={menuItem.name}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.name}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.name}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -134,8 +171,11 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   name="description"
                   value={menuItem.description}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.description}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.description}
+                </Form.Control.Feedback>
                 <Form.Text muted>
                   {menuItem.description.length}/200 characters
                 </Form.Text>
@@ -148,8 +188,11 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   name="price"
                   value={menuItem.price}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.price}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.price}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -159,7 +202,11 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   name="discountPrice"
                   value={menuItem.discountPrice}
                   onChange={handleChange}
+                  isInvalid={!!errors.discountPrice}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.discountPrice}
+                </Form.Control.Feedback>
               </Form.Group>
 
               {roles.includes("ADMIN") && (
@@ -170,7 +217,7 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                     name="restaurantId"
                     value={menuItem.restaurantId}
                     onChange={handleChange}
-                    required
+                    isInvalid={!!errors.restaurantId}
                   >
                     <option value="">Select Restaurant</option>
 
@@ -180,6 +227,9 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                       </option>
                     ))}
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.restaurantId}
+                  </Form.Control.Feedback>
                 </Form.Group>
               )}
 
@@ -191,6 +241,7 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   onChange={handleChange}
                   required
                   disabled={!menuItem.restaurantId}
+                  isInvalid={!!errors.categoryId}
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
@@ -199,6 +250,9 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                     </option>
                   ))}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.categoryId}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -207,7 +261,7 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   name="foodType"
                   value={menuItem.foodType}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.foodType}
                 >
                   <option value="">Select Food Type</option>
                   <option value="VEG">Veg</option>
@@ -215,6 +269,9 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   <option value="EGG">Egg</option>
                   <option value="VEGAN">Vegan</option>
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.foodType}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
 
@@ -225,8 +282,11 @@ export const AddMenu = ({ show, handleClose, onSuccess, restaurantId }) => {
                   type="file"
                   ref={fileInputRef}
                   onChange={handleImageChange}
-                  required
+                  isInvalid={!!errors.image}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.image}
+                </Form.Control.Feedback>
               </Form.Group>
 
               {preview && (

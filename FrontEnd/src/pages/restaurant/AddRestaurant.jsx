@@ -34,6 +34,10 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
       ...prev,
       [name]: value,
     }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
   const handlePhotoChange = (e) => {
@@ -43,14 +47,25 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Only image files are allowed");
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "Only image files are allowed",
+      }));
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image must be less than 2MB");
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "Image size must be less than 2MB",
+      }));
       return;
     }
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
 
     setRestaurantData((prev) => ({
       ...prev,
@@ -69,8 +84,24 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
 
     if (!restaurantData.name.trim()) {
       newErrors.name = "Restaurant name is required";
-    } else if (restaurantData.name.length < 3) {
-      newErrors.name = "Name must be at least 3 characters";
+    } else if (restaurantData.name.trim().length < 3) {
+      newErrors.name = "Restaurant name must be at least 3 characters";
+    } else if (!/^[A-Za-z0-9\s&'-]+$/.test(restaurantData.name)) {
+      newErrors.name = "Restaurant name contains invalid characters";
+    }
+
+    if (!restaurantData.description.trim()) {
+      newErrors.description = "Description is required";
+    } else if (restaurantData.description.trim().length < 20) {
+      newErrors.description = "Description must be at least 20 characters";
+    } else if (restaurantData.description.length > 200) {
+      newErrors.description = "Description cannot exceed 200 characters";
+    }
+
+    if (!restaurantData.address.trim()) {
+      newErrors.address = "Address is required";
+    } else if (restaurantData.address.trim().length < 5) {
+      newErrors.address = "Address must be at least 5 characters";
     }
 
     if (!restaurantData.email.trim()) {
@@ -81,36 +112,25 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
       newErrors.email = "Invalid email address";
     }
 
-    if (!restaurantData.description.trim()) {
-      newErrors.description = "Description is required";
-    } else if (restaurantData.description.length > 200) {
-      newErrors.description = "Description cannot exceed 200 characters";
-    }
-
-    if (!restaurantData.address.trim()) {
-      newErrors.address = "Address is required";
-    } else if (restaurantData.address.length < 5) {
-      newErrors.address = "Address is too short";
-    }
-
     if (!restaurantData.phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone number is required";
-    } else if (!/^\d{7,15}$/.test(restaurantData.phoneNumber)) {
-      newErrors.phoneNumber = "Invalid phone number";
+    } else if (!/^9\d{9}$/.test(restaurantData.phoneNumber)) {
+      newErrors.phoneNumber = "Enter a valid 10-digit Nepal phone number";
     }
 
-    const lat = parseFloat(restaurantData.latitude);
-    const lng = parseFloat(restaurantData.longitude);
+    const latitude = parseFloat(restaurantData.latitude);
 
     if (!restaurantData.latitude) {
       newErrors.latitude = "Latitude is required";
-    } else if (lat < -90 || lat > 90) {
+    } else if (latitude < -90 || latitude > 90) {
       newErrors.latitude = "Latitude must be between -90 and 90";
     }
 
+    const longitude = parseFloat(restaurantData.longitude);
+
     if (!restaurantData.longitude) {
       newErrors.longitude = "Longitude is required";
-    } else if (lng < -180 || lng > 180) {
+    } else if (longitude < -180 || longitude > 180) {
       newErrors.longitude = "Longitude must be between -180 and 180";
     }
 
@@ -125,6 +145,19 @@ export const AddRestaurant = ({ show, onHide, onRestaurantAdded }) => {
       restaurantData.closeTime <= restaurantData.openTime
     ) {
       newErrors.closeTime = "Close time must be after open time";
+    }
+
+    if (!restaurantData.startTime) {
+      newErrors.startTime = "Delivery start time is required";
+    }
+
+    if (!restaurantData.endTime) {
+      newErrors.endTime = "Delivery end time is required";
+    } else if (
+      restaurantData.startTime &&
+      restaurantData.endTime <= restaurantData.startTime
+    ) {
+      newErrors.endTime = "Delivery end time must be after start time";
     }
 
     if (!restaurantData.coverPhoto) {
