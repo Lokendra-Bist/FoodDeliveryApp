@@ -106,13 +106,14 @@ export const getMenuItems = async (page, size, search) => {
 export const getMenuItem = async ({
   page,
   size,
+  categoryId,
   search,
   foodType,
   sortBy,
   sortDir,
 }) => {
   const response = await api.get("/api/menuItem/getMenuItem", {
-    params: { page, size, search, foodType, sortBy, sortDir },
+    params: { page, size, categoryId, search, foodType, sortBy, sortDir },
   });
   return response.data;
 };

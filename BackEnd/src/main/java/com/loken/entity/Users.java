@@ -14,7 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -22,8 +22,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class Users {
 	
 	@Id
@@ -36,11 +36,13 @@ public class Users {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Column(nullable = false, unique = true)
+	@Column(unique = true)
 	private String phoneNumber;
 	
-	@Column(nullable = false)
 	private String password;
+	
+	@Enumerated(EnumType.STRING)
+	private AuthProvider provider;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)

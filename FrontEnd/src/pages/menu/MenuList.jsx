@@ -4,6 +4,7 @@ import { MenuCard } from "../../components/menu/MenuCard";
 import { MenuFilters } from "../../components/menu/MenuFilter";
 import { PaginationControl } from "../../components/common/PaginationControl";
 import { useMenuItems } from "../../hooks/useMenuItems";
+import { useSearchParams } from "react-router-dom";
 
 export const MenuList = () => {
   const [page, setPage] = useState(0);
@@ -15,9 +16,13 @@ export const MenuList = () => {
   const [sortBy, setSortBy] = useState("price");
   const [sortDir, setSortDir] = useState("asc");
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryId = searchParams.get("categoryId");
+
   const { menuItems, totalPages, loading } = useMenuItems({
     page,
     size,
+    categoryId,
     search: searchQuery,
     foodType: selectedFoodType,
     sortBy,
@@ -37,6 +42,9 @@ export const MenuList = () => {
             searchQuery={searchQuery}
             onSearchChange={(val) => {
               setSearchQuery(val);
+              if (val.trim()) {
+                setSearchParams({});
+              }
               setPage(0);
             }}
             sortBy={sortBy}

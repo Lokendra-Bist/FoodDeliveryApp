@@ -96,6 +96,7 @@ public class CategoryMgmtService implements ICategoryMgmtService {
 		return CategoryMapper.toResponse(savedCategory);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	@Transactional(readOnly = true)
 	public Page<CategoryResponse> getCategories(int page, int size, String search) {

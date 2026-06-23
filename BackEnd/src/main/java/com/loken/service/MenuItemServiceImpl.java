@@ -2,7 +2,6 @@ package com.loken.service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,20 +75,20 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 	@Transactional
 	public List<MenuItemResponse> getItemByCategory(Long id) {
 		List<MenuItem> item = menuItemRepo.findByCategoryId(id);
-		return item.stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
+		return item.stream().map(MenuItemMapper::toResponse).toList();
 	}
 
 	@Override
 	@Transactional
 	public List<MenuItemResponse> getMenuItemByRestaurantAndCategory(Long restaurantId, Long categoryId) {
 		List<MenuItem> menuItemList = menuItemRepo.findByRestaurantIdAndCategoryId(restaurantId, categoryId);
-		return menuItemList.stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
+		return menuItemList.stream().map(MenuItemMapper::toResponse).toList();
 	}
 
 	@Override
 	@Transactional
 	public List<MenuItemResponse> getAllMenuItems() {
-		return menuItemRepo.findAll().stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
+		return menuItemRepo.findAll().stream().map(MenuItemMapper::toResponse).toList();
 	}
 
 	@Override
@@ -111,7 +110,7 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 		if (itemList.isEmpty()) {
 			throw new ResourceNotFoundException("No menu items found for this restaurant");
 		}
-		return itemList.stream().map(MenuItemMapper::toResponse).collect(Collectors.toList());
+		return itemList.stream().map(MenuItemMapper::toResponse).toList();
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")

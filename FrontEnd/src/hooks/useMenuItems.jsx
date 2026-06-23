@@ -4,6 +4,7 @@ import { getMenuItem } from "../api/menuApi";
 export const useMenuItems = ({
   page,
   size,
+  categoryId,
   search,
   foodType,
   sortBy,
@@ -20,14 +21,17 @@ export const useMenuItems = ({
         const data = await getMenuItem({
           page,
           size,
+          categoryId,
           search,
           foodType,
           sortBy,
           sortDir,
         });
 
+        console.log("Fetched menu items:", data);
+
         setMenuItems(data.content);
-        setTotalPages(data.page.totalPages);
+        setTotalPages(data.totalPages);
       } catch (err) {
         console.error(err);
       } finally {
@@ -36,7 +40,7 @@ export const useMenuItems = ({
     };
 
     fetchMenuItems();
-  }, [page, size, search, foodType, sortBy, sortDir]);
+  }, [page, size, categoryId, search, foodType, sortBy, sortDir]);
 
   return { menuItems, totalPages, loading };
 };

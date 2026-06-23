@@ -156,6 +156,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 	}
 
+	@PreAuthorize("hasAnyRole('USER')")	
 	@Transactional
 	@Override
 	public List<OrderResponse> getOrderByUserId(Long userId) {
@@ -205,6 +206,7 @@ public class OrderServiceImpl implements IOrderService {
 	            .toList();
 	}
 	
+	@PreAuthorize("hasRole('RESTAURANT_OWNER')")
 	@Transactional
 	@Override
 	public Page<OrderResponse> getOrderByRestaurantAndOrderStatus(Long userId, int page, 
@@ -241,6 +243,7 @@ public class OrderServiceImpl implements IOrderService {
 							);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Transactional
 	@Override
 	public OrderResponse updateOrderStatus(Long orderId, OrderStatus status) {

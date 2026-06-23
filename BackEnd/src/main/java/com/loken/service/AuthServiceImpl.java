@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.loken.entity.AuthProvider;
 import com.loken.entity.Role;
 import com.loken.entity.Users;
 import com.loken.exception.BadRequestException;
@@ -61,6 +62,7 @@ public class AuthServiceImpl implements IAuthService {
 		
 		Users user = UserMapper.toEntity(request);
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setProvider(AuthProvider.LOCAL);
 		user.setRoles(Set.of(Role.USER));
 		userRepo.save(user);
 				

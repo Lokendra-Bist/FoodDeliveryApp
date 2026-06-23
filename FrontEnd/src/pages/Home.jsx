@@ -1,14 +1,17 @@
 import AppDownload from "../components/layout/AppDownload";
 import CategoryMenu from "./category/CategoryMenu";
 import { Header } from "../components/layout/Header";
-import { Restaurant } from "./restaurant/Restaurant";
+import { TopRatedRestaurants } from "./restaurant/TopRatedRestaurants";
 
 export const Home = () => {
   return (
     <div>
       <Header />
+
       <CategoryMenu />
-      <Restaurant />
+
+      <TopRatedRestaurants />
+
       <AppDownload />
     </div>
   );
