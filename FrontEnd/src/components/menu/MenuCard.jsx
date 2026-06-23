@@ -1,5 +1,4 @@
 import { Card, Row, Col, Badge, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 
@@ -37,10 +36,7 @@ export const MenuCard = ({ menuItem }) => {
   };
 
   return (
-    <Link
-      to={`/menu-detail/${menuItem.id}`}
-      className="text-decoration-none text-dark menu-card-link"
-    >
+    <div className="text-decoration-none text-dark menu-card-link">
       <Card className="mb-4 shadow-sm">
         <Row className="g-0 flex-column flex-md-row">
           <Col md={4} className="position-relative">
@@ -98,6 +94,6 @@ export const MenuCard = ({ menuItem }) => {
           </Col>
         </Row>
       </Card>
-    </Link>
+    </div>
   );
 };

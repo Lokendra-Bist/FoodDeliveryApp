@@ -164,6 +164,10 @@ const Navbar = () => {
 
                   {roles.includes("RESTAURANT_OWNER") && (
                     <>
+                      <NavDropdown.Item as={NavLink} to="/my-orders">
+                        My Orders
+                      </NavDropdown.Item>
+
                       <NavDropdown.Item as={NavLink} to="/restaurant/dashboard">
                         Go to Restaurant Panel
                       </NavDropdown.Item>
@@ -172,6 +176,10 @@ const Navbar = () => {
 
                   {roles.includes("ADMIN") && (
                     <>
+                      <NavDropdown.Item as={NavLink} to="/my-orders">
+                        My Orders
+                      </NavDropdown.Item>
+
                       <NavDropdown.Item as={NavLink} to="/admin/dashboard">
                         Admin Panel
                       </NavDropdown.Item>

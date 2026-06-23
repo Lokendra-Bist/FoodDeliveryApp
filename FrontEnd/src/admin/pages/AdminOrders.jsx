@@ -10,6 +10,7 @@ import {
   Form,
   InputGroup,
   Button,
+  Table,
 } from "react-bootstrap";
 
 import { FaSearch, FaSyncAlt } from "react-icons/fa";
@@ -19,7 +20,7 @@ import toast from "react-hot-toast";
 import { getOrdersAPI } from "../../api/orderApi";
 import { PaginationControl } from "../../components/common/PaginationControl";
 
-export const Orders = () => {
+export const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -202,89 +203,113 @@ export const Orders = () => {
         </Card.Body>
       </Card>
 
-      {/* ORDERS */}
+      {/* ORDERS TABLE */}
 
       {loading ? (
         <div className="text-center py-5">
           <Spinner animation="border" />
         </div>
       ) : (
-        <Row className="g-4">
-          {orders.map((order) => (
-            <Col lg={6} key={order.orderId}>
-              <Card className="border-0 shadow-sm rounded-4 h-100">
-                <Card.Body>
-                  <div className="d-flex justify-content-between mb-3">
-                    <div>
-                      <h5 className="fw-bold">Order #{order.orderId}</h5>
+        <Card className="border-0 shadow-sm rounded-4">
+          <Card.Body className="p-0">
+            <div className="table-responsive">
+              <Table hover striped className="align-middle mb-0">
+                <thead className="table-dark">
+                  <tr>
+                    <th>#Order</th>
+                    <th>Customer</th>
+                    <th>Restaurant</th>
+                    <th>Total</th>
+                    <th>Items</th>
+                    <th>Order Status</th>
+                    <th>Payment</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Ordered At</th>
+                  </tr>
+                </thead>
 
-                      <div>{order.customerName}</div>
+                <tbody>
+                  {orders.length > 0 ? (
+                    orders.map((order) => (
+                      <tr key={order.orderId}>
+                        <td>
+                          <strong>#{order.orderId}</strong>
+                        </td>
 
-                      <small className="text-muted">
-                        {order.restaurantName}
-                      </small>
-                    </div>
+                        <td>{order.customerName}</td>
 
-                    <div className="text-end">
-                      <h5 className="fw-bold">Rs. {order.totalAmount}</h5>
+                        <td>{order.restaurantName}</td>
 
-                      <small className="text-muted">
-                        {order.quantity} items
-                      </small>
+                        <td>
+                          <span className="fw-bold text-success">
+                            Rs. {order.totalAmount}
+                          </span>
+                        </td>
 
-                      <div className="mt-2">
-                        <small className="text-muted">Ordered Items</small>
+                        <td>
+                          <div
+                            style={{
+                              maxWidth: "250px",
+                            }}
+                          >
+                            {order.items?.map((item, index) => (
+                              <Badge
+                                key={index}
+                                bg="light"
+                                text="dark"
+                                className="me-1 mb-1 border"
+                              >
+                                {item}
+                              </Badge>
+                            ))}
+                          </div>
+                        </td>
 
-                        <div className="d-flex flex-wrap gap-2 mt-1">
-                          {order.items?.map((item, index) => (
-                            <Badge bg="light" text="dark" key={index}>
-                              {item}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                        <td>
+                          <Badge bg={getBadgeColor(order.orderStatus)}>
+                            {order.orderStatus}
+                          </Badge>
+                        </td>
 
-                  <div className="mb-3">
-                    <Badge
-                      bg={getBadgeColor(order.orderStatus)}
-                      className="me-2"
-                    >
-                      {order.orderStatus}
-                    </Badge>
+                        <td>
+                          <Badge
+                            bg={
+                              order.paymentStatus === "PAID"
+                                ? "success"
+                                : "warning"
+                            }
+                          >
+                            {order.paymentStatus}
+                          </Badge>
+                        </td>
 
-                    <Badge
-                      bg={
-                        order.paymentStatus === "PAID" ? "success" : "warning"
-                      }
-                    >
-                      {order.paymentStatus}
-                    </Badge>
-                  </div>
+                        <td>{order.phoneNumber}</td>
 
-                  <div className="mb-2">
-                    <small className="text-muted">Ordered At</small>
+                        <td
+                          style={{
+                            maxWidth: "250px",
+                            whiteSpace: "normal",
+                          }}
+                        >
+                          {order.location}
+                        </td>
 
-                    <div>{new Date(order.createdAt).toLocaleString()}</div>
-                  </div>
-
-                  <div className="mb-2">
-                    <small className="text-muted">Phone Number</small>
-
-                    <div>{order.phoneNumber}</div>
-                  </div>
-
-                  <div>
-                    <small className="text-muted">Delivery Address</small>
-
-                    <div>{order.location}</div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+                        <td>{new Date(order.createdAt).toLocaleString()}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="10" className="text-center py-5">
+                        No Orders Found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </Card.Body>
+        </Card>
       )}
 
       <PaginationControl

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { loginUser } from "../../api/userApi";
+import { googleLogin, loginUser } from "../../api/userApi";
 
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import { GoogleLogin } from "@react-oauth/google";
 
 export const SignIn = ({ onSwitch, onClose }) => {
   const [email, setEmail] = useState("");
@@ -103,11 +104,34 @@ export const SignIn = ({ onSwitch, onClose }) => {
         </button>
       </form>
 
-      {/* <div className="text-center my-3 text-muted">or</div>
+      <div className="text-center my-3 text-muted">or</div>
 
-      <button className="btn btn-outline-dark w-100 rounded-pill">
-        Continue with Google
-      </button> */}
+      <GoogleLogin
+        onSuccess={async (credentialResponse) => {
+          try {
+            const res = await googleLogin({
+              token: credentialResponse.credential,
+            });
+
+            login(res.data);
+
+            Swal.fire({
+              icon: "success",
+              title: "Google Login Successful",
+              text: "Welcome To FoodFusion!",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+
+            onClose();
+          } catch (error) {
+            toast.error("Google Login Failed");
+          }
+        }}
+        onError={() => {
+          toast.error("Google Login Failed");
+        }}
+      />
 
       <p className="text-center mt-4 mb-0">
         Don’t have an account?

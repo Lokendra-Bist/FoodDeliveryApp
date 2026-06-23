@@ -49,3 +49,13 @@ export const getUserProfile = async () => {
     throw error;
   }
 };
+
+export const googleLogin = async (token) => {
+  try {
+    const response = await api.post("/api/auth/google-login", token);
+    return response;
+  } catch (error) {
+    console.error("Google login failed", error);
+    throw error;
+  }
+};

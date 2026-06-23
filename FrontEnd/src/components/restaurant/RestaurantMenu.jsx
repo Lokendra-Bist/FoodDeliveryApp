@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Badge } from "react-bootstrap";
+import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
 import { getCategoryByRestaurantId } from "../../api/categoryApi";
 import { getMenuItemsByRestaurantIdAndCategoryId } from "../../api/menuApi";
+import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 export const RestaurantMenu = ({ restaurantId }) => {
   const [categories, setCategories] = useState([]);
@@ -9,6 +11,9 @@ export const RestaurantMenu = ({ restaurantId }) => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [itemsLoading, setItemsLoading] = useState(false);
+
+  const { addToCart } = useCart();
+  const { token, openAuthModal } = useAuth();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -35,7 +40,7 @@ export const RestaurantMenu = ({ restaurantId }) => {
       try {
         const items = await getMenuItemsByRestaurantIdAndCategoryId(
           restaurantId,
-          selectedCategory
+          selectedCategory,
         );
         setMenuItems(items);
       } catch (error) {
@@ -48,6 +53,21 @@ export const RestaurantMenu = ({ restaurantId }) => {
 
     fetchMenuItems();
   }, [selectedCategory, restaurantId]);
+
+  const handleAddToCart = (e, item) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      openAuthModal();
+      return;
+    }
+
+    addToCart({
+      id: item.id,
+      quantity: 1,
+    });
+  };
 
   if (loading) return <p className="text-center mt-5">Loading menu...</p>;
   if (categories.length === 0)
@@ -134,6 +154,15 @@ export const RestaurantMenu = ({ restaurantId }) => {
                     {discountPercent > 0 && (
                       <Badge bg="success">{discountPercent}% OFF</Badge>
                     )}
+
+                    <div className="mt-3">
+                      <Button
+                        variant="primary"
+                        onClick={(e) => handleAddToCart(e, item)}
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
                   </Card.Body>
                 </Card>
               </Col>
