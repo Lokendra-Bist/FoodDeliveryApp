@@ -2,18 +2,21 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
-const parseJwt = (token) => {
-  try {
-    return JSON.parse(atob(token.split(".")[1]));
-  } catch {
-    return null;
-  }
-};
-
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [user, setUser] = useState(token ? parseJwt(token) : null);
-  const [roles, setRoles] = useState([]);
+
+  const [user, setUser] = useState(() => {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  });
+
+  const [roles, setRoles] = useState(() => {
+    const roles = localStorage.getItem("role");
+    return roles ? JSON.parse(roles) : [];
+  });
+
+  console.log("AuthContext initialized with:", { token, user, roles });
+
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const openAuthModal = () => setShowAuthModal(true);
