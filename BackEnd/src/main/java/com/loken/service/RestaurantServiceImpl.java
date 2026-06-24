@@ -64,12 +64,14 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 		return RestaurantMapper.toResponse(restaurant);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Transactional
 	@Override
 	public List<RestaurantResponse> getAllRestaurantsByStatus() {
-		return restaurantRepo.findByStatus(RestaurantStatus.APPROVED).stream().map(RestaurantMapper::toResponse).collect(Collectors.toList());
+		return restaurantRepo.findByStatus(RestaurantStatus.APPROVED).stream().map(RestaurantMapper::toResponse).toList();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	public RestaurantResponse getRestaurantById(Long id) {
 		Restaurant restaurant = restaurantRepo.findById(id)
@@ -135,12 +137,14 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 		restaurantRepo.delete(restaurant);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Transactional
 	@Override
 	public List<RestaurantResponse> getPendingApplication() {
 		return restaurantRepo.findByStatus(RestaurantStatus.PENDING).stream().map(RestaurantMapper::toResponse).collect(Collectors.toList());
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public void updateStatus(Long id, RestaurantStatus status) {
 		Restaurant restaurant = restaurantRepo.findById(id)
@@ -160,6 +164,7 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 		restaurantRepo.save(restaurant);
 	}
 
+	@PreAuthorize("hasRole('RESTAURANT_OWNER')")
 	@Transactional
 	@Override
 	public RestaurantResponse getRestaurantByOwnerId(Long ownerId) {
@@ -168,6 +173,7 @@ public class RestaurantServiceImpl implements IRestaurantMgmtService {
 		return RestaurantMapper.toResponse(restaurant);
 	}
 
+	@PreAuthorize("hasRole('RESTAURANT_OWNER')")
 	@Transactional(readOnly = true)
 	@Override
 	public RestaurantDashboardResponse getDashboard(Long userId) {

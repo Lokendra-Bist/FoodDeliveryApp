@@ -71,6 +71,7 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 		return MenuItemMapper.toResponse(savedItem);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	@Transactional
 	public List<MenuItemResponse> getItemByCategory(Long id) {
@@ -78,6 +79,7 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 		return item.stream().map(MenuItemMapper::toResponse).toList();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	@Transactional
 	public List<MenuItemResponse> getMenuItemByRestaurantAndCategory(Long restaurantId, Long categoryId) {
@@ -103,6 +105,7 @@ public class MenuItemServiceImpl implements IMenuItemMgmtService {
 		return item.getImage();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
 	@Override
 	@Transactional
 	public List<MenuItemResponse> getMenuItemByRestaurantId(Long id) {

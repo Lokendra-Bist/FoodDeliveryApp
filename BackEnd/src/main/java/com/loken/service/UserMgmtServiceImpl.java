@@ -28,6 +28,7 @@ public class UserMgmtServiceImpl implements IUserMgmtService {
 					.toList();
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public void deleteUser(Long userId) {
 		usersRepo.deleteById(userId);
