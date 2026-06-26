@@ -32,7 +32,7 @@ Install my-project with bun
     
 ## Screenshots
 
-![App Screenshot](https://dummyimage.com/468x300?text=App+Screenshot+Here)
+<img width="1470" height="956" alt="Image" src="https://github.com/user-attachments/assets/51cfbe73-a95d-4122-a857-5a1387f3f282" />
 
 
 ## Future Enhancements
