@@ -1,16 +1,28 @@
+<div align="center">
 
-# FoodFusion
+# 🍔 FoodFusion
 
-FoodFusion is a full-stack food delivery and restaurant management platform built using React.js, Spring Boot, Spring Security, JWT Authentication, and PostgreSQL.
+### Food Delivery Platform
 
+<img src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/Backend-Spring_Boot-6DB33F?logo=springboot&logoColor=white" />
+<img src="https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white" />
+<img src="https://img.shields.io/badge/Auth-JWT-orange" />
+<img src="https://img.shields.io/badge/OAuth-Google-red?logo=google" />
+<img src="https://img.shields.io/badge/License-Educational-blue" />
+
+<br/>
+
+A modern full-stack food delivery platform built with React.js, Spring Boot, JWT Authentication, Google OAuth, and PostgreSQL.
+
+</div>
 
 ## Features
 FoodFusion is a full-stack food delivery application that provides a seamless online food ordering experience for customers while offering powerful management tools for restaurant owners and administrators. Customers can browse restaurants, explore menus, search and filter food items, manage carts, place orders, and review restaurants. Restaurant owners can efficiently manage menus, categories, profiles, and incoming orders through a dedicated dashboard. Administrators have complete control over the platform, including restaurant approval, user management, category management, and order monitoring. The application incorporates JWT authentication, Google OAuth integration, role-based access control, and a modern responsive interface built using React and Spring Boot.
 
-
 ## Tech Stack
 
-**Frontend:** React, React Router DOM, Bootstrap 5, Axios, React Hot Toast, SweetAlerts2, React Icons.
+**Frontend:** React, React Router DOM, Bootstrap5, Axios, React Hot Toast, SweetAlerts2, React Icons.
 
 **Backend:** Spring Boot, Spring Security, Spring Data JPA, JWT Authentication, Google Auth Integration, Lombok, Gradle.
 
@@ -19,15 +31,25 @@ FoodFusion is a full-stack food delivery application that provides a seamless on
 **Development Tools:** Git, Github, Postman, VS Code, Eclipse.
 
 
-## Installation
-
-Install my-project with bun
-
+## Setup
+**Clone Repository**
 ```bash
-  git clone https://github.com/your-username/foodfusion.git
-  cd my-project
-  bun install
-  bun run dev
+git clone https://github.com/Lokendra-Bist/FoodDeliveryApp.git
+cd FoodDeliveryApp
+```
+
+**Environment Variables**
+
+Create a .env file in the frontend root directory and add the following variables:
+```bash
+VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+```
+
+**Dependencies**
+```bash
+cd frontend
+bun install
+bun run dev
 ```
     
 ## Screenshots
@@ -74,12 +96,20 @@ This project demonstrates practical experience with:
 - Database Design
 - Role Based Authorization
 - Industry Level Project Structure
-## Author
-**Lokendra Bist**
 
-Java Backend Developer
 
-GitHub: https://github.com/your-github-username
+## 📄 License
 
-LinkedIn: www.linkedin.com/in/lokenbista
+This project is intended for educational, learning, and portfolio purposes. Feel free to explore the code and use it as a reference for learning.
 
+<div align="center">
+
+### 👨‍💻 Developed by Lokendra Bist
+
+[![GitHub](https://img.shields.io/badge/GitHub-Lokendra--Bist-181717?logo=github)](https://github.com/Lokendra-Bist)
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Lokendra_Bist-0A66C2?logo=linkedin)](https://www.linkedin.com/in/lokenbista)
+
+⭐ If you like this project, consider giving it a star!
+
+</div>
